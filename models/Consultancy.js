@@ -1,16 +1,13 @@
 const mongoose = require('mongoose');
 
 const consultancySchema = new mongoose.Schema({
-    consultancyName : {
+    name : {
         type : String,
-    },
-    username : {
-        type : String,
-        required : true,
     },
     address : {
         type : mongoose.Schema.Types.ObjectId,
-        ref : 'Address'
+        ref : 'Address',
+        required : false
     },
     phoneNumber : {
         type : Number,

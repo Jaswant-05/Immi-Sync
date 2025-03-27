@@ -1,10 +1,11 @@
 const bcrypt = require('bcryptjs');
 const User = require('../../models/User');
 
-const signUp = async(req, res) => {
-    const {username, password, role, consultancy_id, application_type} = req.body;
 
-    if(!username || !password || !role || !consultancy_id || !application_type){
+const signUp = async(req, res) => {
+    const {username, password, role} = req.body;
+
+    if(!username || !password || !role){
         return res.status(404).json({
             message: "Invalid Parameters"
         });
@@ -23,14 +24,11 @@ const signUp = async(req, res) => {
             message: "User with email already exists"
         });
     }
-
+    
     const userPayload = {
         username: username,
         password: hashedPassword,
         role: role,
-        consultancy: consultancy_id,
-        application_type: application_type,
-        application_status : 'Draft'
     };
 
     console.log("Creating user with the following Payload", userPayload);
@@ -46,7 +44,6 @@ const signUp = async(req, res) => {
         newUser,
         message : "User created successfully"
     })
-
 
 }
 
