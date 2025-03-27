@@ -7,7 +7,6 @@ const consultancySchema = new mongoose.Schema({
     address : {
         type : mongoose.Schema.Types.ObjectId,
         ref : 'Address',
-        required : false
     },
     phoneNumber : {
         type : Number,
@@ -18,7 +17,10 @@ const consultancySchema = new mongoose.Schema({
         enum : ['verified', 'unverified'],
         required : true,
     },
-    
+    user : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "User"
+    }
 });
 
 const Consultancy = mongoose.model('Consultancy', consultancySchema);

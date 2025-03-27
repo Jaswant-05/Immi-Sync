@@ -1,9 +1,11 @@
 const bcrypt = require('bcryptjs');
 const User = require('../../models/User');
+const { createConsultancy } = require('../../helpers/consultancy/create-consultancy');
 
 
 const signUp = async(req, res) => {
     const {username, password, role} = req.body;
+    console.log(req.body);
 
     if(!username || !password || !role){
         return res.status(404).json({
@@ -39,11 +41,40 @@ const signUp = async(req, res) => {
             message: "Failed to create a user"
         });
     };
+
+   
+    if(newUser.role === "consultancy"){
+        //create a new consultancy here 
+        const userId = newUser.id;
+        const { name, address, phoneNumber } = req.body;
+
+        if(!userId, !name, !address, !phoneNumber){
+            res.status(404).json({
+                message : "Inavalid Inputs"
+            })
+        };
+
+        const newConsultancy = createConsultancy(userId ,name, address, phoneNumber);
+        if(!newConsultancy){
+            res.status(404).json({
+                message : "Error creating New consultancy"
+            })
+        }
+        newUser.consultancy = newConsultancy.id
+        await newUser.save();
+
+        res.status(200).json({
+            newUser,
+            message : "User created successfully"
+        })
+
+    }
+    else if(newUser.role === "client"){
+         //call the helper functions to assign consultancy here 
+    }
+
     
-    res.status(200).json({
-        newUser,
-        message : "User created successfully"
-    })
+    
 
 }
 
@@ -52,3 +83,6 @@ module.exports = {
 }
 
 
+
+
+//username, password, role name, address, phoneNumber

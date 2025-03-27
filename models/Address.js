@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const addressSchema = new mongoose.Schema({
-    user : {
+    consultancy : {
         type : mongoose.Schema.Types.ObjectId,
         ref : 'Consultancy',
     },
@@ -9,7 +9,7 @@ const addressSchema = new mongoose.Schema({
         type : String,
         required : true
     },
-    address2 : {
+    address1 : {
         type : String
     },
     city : {
