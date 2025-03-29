@@ -13,6 +13,10 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Consultancy',
   }],
+  active_consultancy : {
+    type : mongoose.Schema.Types.ObjectId,
+    ref: 'Consultancy',
+  },
   application_type: {
     type: String,
     enum: ['Visitor', 'Work', 'PR', 'citizenship', 'other'],
@@ -21,6 +25,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['Draft', 'Applied', 'Approved', 'Declined'],
   },
+  
 });
 
 const User = mongoose.model('User', userSchema);
