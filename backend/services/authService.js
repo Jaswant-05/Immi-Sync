@@ -5,55 +5,71 @@ const { createConsultancy } = require('./consultancyService');
 const Consultancy = require('../models/Consultancy');
 
 const signUp = async (data) => {
-  const { username, password, role, name, address, phoneNumber, applicationType, consultancyId } = data;
+  const {
+    username,
+    password,
+    role,
+    name,
+    address,
+    phoneNumber,
+    applicationType,
+    consultancyId
+  } = data;
 
+  // Validate base user fields
   if (!username || !password || !role) {
-    throw new Error('Missing required fields');
+    throw new Error("Missing required fields");
   }
 
+  // Check if user already exists
   const existingUser = await User.findOne({ username });
   if (existingUser) {
-    throw new Error('User already exists');
+    throw new Error("User already exists");
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  // Validate role-specific data BEFORE creating user
+  if (role === "consultancy") {
+    if (!name || !address || !phoneNumber) {
+      throw new Error("Missing consultancy details");
+    }
+  } else if (role === "client") {
+    if (!applicationType || !consultancyId) {
+      throw new Error("Missing client details");
+    }
 
+    const consultancy = await Consultancy.findById(consultancyId);
+    if (!consultancy) {
+      throw new Error("Consultancy not found");
+    }
+  }
+
+  // All checks passed, now safely create the user
+  const hashedPassword = await bcrypt.hash(password, 10);
   const user = await User.create({
     username,
     password: hashedPassword,
-    role,
+    role
   });
 
-  if (role === 'consultancy') {
-    if (!name || !address || !phoneNumber) {
-      throw new Error('Missing consultancy details');
-    }
-
+  // Add role-specific info
+  if (role === "consultancy") {
     const consultancy = await createConsultancy(user._id, name, address, phoneNumber);
     user.consultancy.push(consultancy._id);
     await user.save();
-  }
-  else if(role === 'client'){
-    if(!applicationType || !consultancyId){
-        throw new Error('Missing client details');
-    }
-
+  } else if (role === "client") {
     user.application_type = applicationType;
-    user.application_status = "Draft"
+    user.application_status = "Draft";
     user.consultancy.push(consultancyId);
-    await user.save();    
+    await user.save();
 
-    const consultancy = await Consultancy.findOne({_id : consultancyId});
-    if(!consultancy){
-        throw new Error("consultancy not found");
-    }
-    consultancy.users.push(user._id);
-    await consultancy.save();
+    await Consultancy.findByIdAndUpdate(consultancyId, {
+      $push: { users: user._id }
+    });
   }
-  
 
   return user;
 };
+
 
 const signIn = async (data) => {
     const { username, password } = data;
@@ -82,7 +98,8 @@ const signIn = async (data) => {
   
       return {
         user,
-        token
+        token,
+        role : user.role,
       };
   
     } catch (err) {
