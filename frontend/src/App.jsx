@@ -1,8 +1,7 @@
-import { useState } from 'react'
 import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { Home } from './pages/Home'
-import { SignIn } from './pages/SignIn'
+import { Landing } from './pages/Landing'
+import { NavLayout } from './layouts/NavLayout'
 
 function App() {
 
@@ -10,8 +9,7 @@ function App() {
     <div className='min-h-screen bg-white'>
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/login' element={<SignIn />} />
+          <Route path='/' element={<NavLayout><Landing /></NavLayout>}/>
         </Routes>
       </BrowserRouter>
     </div>
