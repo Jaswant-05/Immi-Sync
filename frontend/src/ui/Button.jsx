@@ -18,7 +18,7 @@ export const Button = ({ children, variant = "primary", className, onClick, type
         VARIANTS[variant],
         className
       )}
-      //onClick={onClick}
+      onClick={onClick}
       type={type}
       {...rest}
     >
