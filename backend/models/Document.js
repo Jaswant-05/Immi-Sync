@@ -30,6 +30,11 @@ const documentSchema = new mongoose.Schema({
         default: false,
         required: true
     },
+    checklist : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Checklist",
+        required: false
+    }
 });
 
 const Document = mongoose.model('Document', documentSchema);
