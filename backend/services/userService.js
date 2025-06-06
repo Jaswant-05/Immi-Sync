@@ -1,6 +1,6 @@
 const User = require("../models/User");
 
-const updateUserService = async (data) => {
+const updateUserService = async(data) => {
   const { userId, ...updates } = data;
 
   if (!userId) {
@@ -20,6 +20,36 @@ const updateUserService = async (data) => {
   return updatedUser;
 };
 
+const getUserInfo = async(userId) => {
+  if(!userId){
+    throw new Error(`Missing required field for getting User info`);
+  }
+  try{
+    console.log(userId);
+    const user = await User.findOne({ _id : userId });
+    return({success: true, user});
+  }catch(error){
+    throw new Error(`Failed to fetch Users from db ${error.message}`);
+  }
+};
+
+const removeUser = async(userId) => {
+  try{
+
+    if(!userId){
+      throw new Error(`Missing Required Fields`);
+    }
+
+    const result = await User.deleteOne({ _id : userId});
+    return({success: true, message: "User deleted successfully"});
+
+  }catch(error){
+    throw new Error(`Failed to Remove User ${error.message}`)
+  }
+};
+
 module.exports = {
   updateUserService,
+  getUserInfo,
+  removeUser,
 };

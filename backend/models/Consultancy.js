@@ -13,13 +13,16 @@ const consultancySchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['verified', 'unverified'],
+    enum: ['verified', 'unverified', 'unpublished'],
     required: true,
   },
   users: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   }],
+  stripe_customer_id : {
+    type: String,
+  },
 });
 
 const Consultancy = mongoose.model('Consultancy', consultancySchema);

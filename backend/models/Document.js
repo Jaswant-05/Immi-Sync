@@ -25,6 +25,11 @@ const documentSchema = new mongoose.Schema({
         default : Date.now(),
         required : true
     },
+    uploaded : {
+        type: Boolean,
+        default: false,
+        required: true
+    },
 });
 
 const Document = mongoose.model('Document', documentSchema);
