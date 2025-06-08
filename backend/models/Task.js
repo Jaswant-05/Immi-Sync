@@ -35,6 +35,7 @@ const taskSchema = new mongoose.Schema({
     },
     updatedAt : {
         type: Date,
+        required: false
     }
 });
 
