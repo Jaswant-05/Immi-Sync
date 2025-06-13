@@ -45,7 +45,6 @@ const taskService = {
         throw new Error(`Error in updating Task: ${err.message}`);
     }
     },
-
     async getTask({ taskId }){
         try{
 

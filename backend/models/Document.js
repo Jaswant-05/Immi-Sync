@@ -16,9 +16,13 @@ const documentSchema = new mongoose.Schema({
         type : String,
         required : true
     },
+    gcs_file_name :{
+        type : String,
+        required : false
+    },
     url : {
         type : String,
-        required : true
+        required : false
     },
     createdAt : {
         type : Date,

@@ -41,8 +41,14 @@ const uploadFileToGCS = (file) => {
 };
 
 const deleteFileFromGCS = async (fileName) => {
-  await bucket.file(fileName).delete();
-  console.log(`gs://${bucket.name}/${fileName} deleted`);
+  try{
+    await bucket.file(fileName).delete();
+    console.log(`gs://${bucket.name}/${fileName} deleted`);
+    return({success: true, message: "File deleted from gcs"});
+  } catch(err){
+    throw new Error(`Error deleting from GCS ${err.message}`);
+  }
+ 
 };
 
 module.exports = {
