@@ -1,3 +1,4 @@
+const Document = require("../models/Document");
 const { deleteFileFromGCS } = require("./gcsService");
 
 const documentService = {

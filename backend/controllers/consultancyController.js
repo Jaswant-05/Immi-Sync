@@ -1,9 +1,11 @@
+const Consultancy = require("../models/Consultancy");
 const { removeConsultancy, getUsers, updateConsultancy } = require("../services/consultancyService");
 
 const getConsultancyUsers = async(req,res) => {
     try {
-        const consultancyId = req.userId;
-        const result = await getUsers(consultancyId);
+        const userId = req.userId;
+        const consultancy = await Consultancy.findOne({admin : userId});
+        const result = await getUsers(consultancy._id);
         if(result.success){
             res,json(result.users);
         }
@@ -14,8 +16,9 @@ const getConsultancyUsers = async(req,res) => {
 
 const updateConsultancyInfo = async(req, res) => {
     try {
-        const consultancyId = req.consultancyId;
-        const result = await updateConsultancy(consultancyId, ...req.body)
+        const userId = req.userId;
+        const consultancy = await Consultancy.findOne({admin : userId});
+        const result = await updateConsultancy(consultancy._id, ...req.body)
         if(result.success){
             res.json(result.consultancy);
         }
@@ -26,8 +29,9 @@ const updateConsultancyInfo = async(req, res) => {
 
 const deleteConsultancy = async(req, res) => {
     try{
-        const consultancyId = req.consultancyId;
-        const result = await removeConsultancy(consultancyId);
+        const userId = req.userId;
+        const consultancy = await Consultancy.findOne({admin : userId});
+        const result = await removeConsultancy(consultancy._id);
         if(result.success){
             res.json({success: true, message: "Unpublished Consultancy"});
         }

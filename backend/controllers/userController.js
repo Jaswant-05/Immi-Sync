@@ -2,10 +2,9 @@ const { updateUserService, removeUser, getUserInfo } = require("../services/user
 
 const getInfo = async(req,res) => {
   try{
-    console.log(req.userId);
     const userId = req.userId;
     const result = await getUserInfo(userId); 
-    console.log(result); 
+  
     if(result.success){
       res.json({success: true, user: result.user});
     }

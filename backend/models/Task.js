@@ -4,7 +4,7 @@ const taskSchema = new mongoose.Schema({
     user : {
         type : mongoose.Schema.Types.ObjectId,
         ref : 'User',
-        required : true
+        required : false
     },
     consultancy : {
         type : mongoose.Schema.Types.ObjectId,
@@ -20,7 +20,7 @@ const taskSchema = new mongoose.Schema({
         required : true
     },
     isDone : {
-        type : boolean,
+        type : Boolean,
         required : true,
     },
     checklist : {
