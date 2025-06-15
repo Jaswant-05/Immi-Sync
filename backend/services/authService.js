@@ -12,7 +12,6 @@ const signUp = async (data) => {
     name,
     address,
     phoneNumber,
-    applicationType,
     consultancyId
   } = data;
 
@@ -33,7 +32,7 @@ const signUp = async (data) => {
       throw new Error("Missing consultancy details");
     }
   } else if (role === "client") {
-    if (!applicationType || !consultancyId) {
+    if (!consultancyId) {
       throw new Error("Missing client details");
     }
 
@@ -57,8 +56,6 @@ const signUp = async (data) => {
     user.consultancy.push(consultancy._id);
     await user.save();
   } else if (role === "client") {
-    user.application_type = applicationType;
-    user.application_status = "Draft";
     user.consultancy.push(consultancyId);
     await user.save();
 
