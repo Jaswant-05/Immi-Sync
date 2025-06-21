@@ -14,7 +14,7 @@ const checklistSchema = new mongoose.Schema({
     application: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Application',
-        required: true
+        required: false
     },
     documents : [{
         type: mongoose.Schema.Types.ObjectId,

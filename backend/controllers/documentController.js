@@ -2,11 +2,11 @@ const DocumentService = require("../services/documentService");
 const { uploadFileToGCS, deleteFileFromGCS } = require("../services/gcsService");
 const User = require("../models/User");
 
-const createDocument = async (req, res) => {
+const createDocument = async (req, res) => { 
   try {
     const userId = req.userId;
     console.log(userId);
-    const { name, checklistId } = req.body;
+    const { name, checklistId, application } = req.body;
 
     const user = await User.findById(userId);
     console.log(user);
@@ -19,7 +19,7 @@ const createDocument = async (req, res) => {
     let uploaded = false;
 
     if (req.file) {
-        console.log("reached here");
+      console.log("reached here");
       const filename = `${Date.now()}-${req.file.originalname}`;
       url = await uploadFileToGCS(req.file);
       gcs_file_name = filename;
@@ -31,6 +31,7 @@ const createDocument = async (req, res) => {
       user: userId,
       consultancy: user.active_consultancy,
       checklist: checklistId || null,
+      application,
       gcs_file_name,
       url,
       uploaded

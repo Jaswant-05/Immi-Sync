@@ -20,7 +20,7 @@ const getTask = async (req, res) => {
 const createTask = async (req, res) => {
   try {
     const userId = req.userId;
-    const { title, description, checklistId } = req.body;
+    const { title, description, checklistId, application } = req.body;
     const user = await User.findOne({_id : userId});
     const consultancyId = user.active_consultancy;
 
@@ -30,6 +30,7 @@ const createTask = async (req, res) => {
       title,
       description,
       checklistId,
+      application
     });
 
     return res.status(201).json(result);

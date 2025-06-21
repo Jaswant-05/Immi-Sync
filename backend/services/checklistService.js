@@ -5,11 +5,12 @@ const documentService = require('./documentService');
 const taskService = require('./taskService');
 
 const checklistService = {
-  async createChecklist({ consultancyId, userId = null }) {
+  async createChecklist({ consultancyId, userId = null, application = null  }) { 
     try {
       const newChecklist = await Checklist.create({
         consultancy: consultancyId,
         user: userId,
+        application
       });
 
       return { success: true, checklist: newChecklist };
@@ -94,12 +95,13 @@ const checklistService = {
     }
   },
 
-  async assignChecklist({ checklistId, userId }) {
+  async assignChecklist({ checklistId, userId, application }) {  
     try {
       const checklist = await Checklist.findById(checklistId);
       if (!checklist) return { success: false, message: "Checklist not found" };
 
       checklist.user = userId;
+      checklist.application = application
       checklist.updatedAt = new Date();
       await checklist.save();
 

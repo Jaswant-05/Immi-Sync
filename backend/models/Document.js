@@ -38,6 +38,11 @@ const documentSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Checklist",
         required: false
+    },
+    application : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Application",
+        required: true
     }
 });
 

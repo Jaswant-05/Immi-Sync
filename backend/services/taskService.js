@@ -1,9 +1,9 @@
 const Task = require("../models/Task");
 
 const taskService = {
-    async createTask(params) {
+    async createTask(params) { //should also have a relationship with application which has to be a must
         try {
-            const { userId, consultancyId, title, description, checklistId } = params;
+            const { userId, consultancyId, title, description, checklistId, application } = params;
 
             const taskData = {
                 user: userId,
@@ -11,6 +11,7 @@ const taskService = {
                 title,
                 description,
                 isDone: false,
+                application
             };
 
             if (checklistId) {

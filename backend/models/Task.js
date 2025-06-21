@@ -28,6 +28,11 @@ const taskSchema = new mongoose.Schema({
         ref: "Checklist",
         required: false
     },
+    application : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Application",
+        required: true
+    },
     createdAt : {
         type : Date,
         default : Date.now(),

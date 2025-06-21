@@ -2,7 +2,7 @@ const Document = require("../models/Document");
 const { deleteFileFromGCS } = require("./gcsService");
 
 const documentService = {
-    async createDocument(payload){
+    async createDocument(payload){ //should also have a relationship with application which has to be a must
         try {
             const {
                 user,
@@ -11,7 +11,8 @@ const documentService = {
                 gcs_file_name,  
                 url,   
                 uploaded = false,
-                checklist      
+                checklist ,
+                application    
             } = payload;
 
             const newDoc = await Document.create({
@@ -21,7 +22,8 @@ const documentService = {
                 gcs_file_name,
                 url,
                 uploaded,
-                checklist
+                checklist,
+                application
             });
 
             return { success: true, document: newDoc };
