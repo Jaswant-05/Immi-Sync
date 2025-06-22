@@ -12,7 +12,6 @@ const signUp = async (data) => {
     name,
     address,
     phoneNumber,
-    consultancyId
   } = data;
 
   // Validate base user fields
@@ -26,19 +25,9 @@ const signUp = async (data) => {
     throw new Error("User already exists");
   }
 
-  // Validate role-specific data BEFORE creating user
   if (role === "consultancy") {
     if (!name || !address || !phoneNumber) {
       throw new Error("Missing consultancy details");
-    }
-  } else if (role === "client") {
-    if (!consultancyId) {
-      throw new Error("Missing client details");
-    }
-
-    const consultancy = await Consultancy.findById(consultancyId);
-    if (!consultancy) {
-      throw new Error("Consultancy not found");
     }
   }
 
@@ -55,13 +44,6 @@ const signUp = async (data) => {
     const consultancy = await createConsultancy(user._id, name, address, phoneNumber);
     user.consultancy.push(consultancy._id);
     await user.save();
-  } else if (role === "client") {
-    user.consultancy.push(consultancyId);
-    await user.save();
-
-    await Consultancy.findByIdAndUpdate(consultancyId, {
-      $push: { users: user._id }
-    });
   }
 
   return user;

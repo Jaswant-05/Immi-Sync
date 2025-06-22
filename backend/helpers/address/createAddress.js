@@ -1,19 +1,13 @@
 const createAddress = ({
     consultancy_id,
-    address1,
-    address2,
-    city,
-    state,
-    postal_code,
-    country
+    addressString,
+    longitude,
+    latitude
   }) => ({
     consultancy: consultancy_id,
-    address1,
-    address2: address2 || null,
-    city,
-    state,
-    postal_code,
-    country,
+    address: addressString,
+    longitude,
+    latitude
   });
   
   module.exports = createAddress;

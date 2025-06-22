@@ -2,6 +2,7 @@ const authService = require('../services/authService');
 
 const signUp = async (req, res) => {
   try {
+    console.log("reached here")
     const user = await authService.signUp(req.body);
     return res.status(201).json({ message: 'User created successfully', user });
   } catch (err) {
@@ -11,6 +12,7 @@ const signUp = async (req, res) => {
 
 const signIn = async (req, res) => {
     try {
+        console.log("reached here")
         const response = await authService.signIn(req.body);
         return res.status(201).json({ message: 'Sign-In successfully', user : response.user, token: response.token });
       } catch (err) {
