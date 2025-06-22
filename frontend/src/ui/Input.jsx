@@ -6,7 +6,7 @@ const VARIANTS = {
     error : `focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500`
 }
 
-export const Input = ({type, name, variant = "default", label, register, className, required}) => {
+export const Input = ({type, name, variant = "default", label, register, className, required, ref, minlength, pattern}) => {
  return (   
     <>
         <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
@@ -17,9 +17,10 @@ export const Input = ({type, name, variant = "default", label, register, classNa
                 VARIANTS[variant],
                 className
             )}
+            ref={ref || undefined}
             type={type}
             placeholder={label}
-            {...register(name, { required })} 
+            {...register(name, { required, minlength: minlength, pattern: pattern })} 
         />
      </>
  )

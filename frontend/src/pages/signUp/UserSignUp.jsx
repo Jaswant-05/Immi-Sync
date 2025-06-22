@@ -1,14 +1,29 @@
 import { ArrowRight, Lock } from "lucide-react"
 import { Input } from "../../ui/Input";
-import { Select } from "../../ui/Select";
 import { Button } from "../../ui/Button";
 import { useForm } from "react-hook-form";
-
+import axios from "axios"
+import { useNavigate } from "react-router-dom";
 
 export const UserSignUp = () => {
-    const { register, handleSubmit, setValue } = useForm();
-    const onSubmit = data => console.log(data);
-  
+    const { register, handleSubmit, formState: { errors }, } = useForm();
+    const navigate = useNavigate();
+    const onSubmit = async (data) => {
+    try {
+        console.log("reached here");
+        const response = await axios.post("http://localhost:3000/api/v1/auth/signup", {
+            username: data.emailAddress,
+            password: data.password,
+            role: 'client'
+        });
+
+        console.log(response.data);   
+
+    } catch (error) {
+        console.error("Sign-in error:", error);
+    }
+    };
+
     return (
         <div className="flex flex-1 items-center justify-center bg-gray-50">
             <div className="mx-4 md:mx-0 w-full max-w-md p-8 bg-white shadow rounded-xl">
@@ -17,54 +32,40 @@ export const UserSignUp = () => {
                 </div>
                 <h2 className="text-xl font-semibold text-center">Welcome</h2>
                 <p className="text-sm text-gray-500 text-center mb-6">
-                    Create A new Account
+                    Create a new account
                 </p>
         
                 <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-                    <Input 
-                        type="text" 
-                        name="emailAddress"
-                        label="Email Address" 
-                        register={register} r
-                        equired 
-                    />
-
-                    <Input
-                        type="password" 
-                        name="password"
-                        label="Password" 
-                        register={register} 
-                        required 
-                    />
-
-                    <Select
-                        label="Application Type"
-                        register={register}
-                        name="applicationType"
-                        setValue={setValue}
-                        required
-                        className="mt-4"
-                        options={[
-                        { label: "Select Type", value: "" },
-                        { label: "Visitor", value: "Visitor" },
-                        { label: "Work Permit", value: "Work Permit" },
-                        { label: "Permanent Residence", value: "Permanent Residence" },
-                        { label: "Citizen", value: "Citizen" }
-                        ]}
-                    />
-
-                    <Select
-                        label="Consultancy"
-                        register={register}
-                        name="consultancy"
-                        required
-                        setValue={setValue}
-                        className="mt-4"
-                        options={[  // need to be taken from the backend need a seperate backend point for this.
-                        { label: "Choose Consultancy", value: "" },
-                        { label: "NNC Immigration", value: "NNC Immigratioin" },
-                        ]}
-                    />
+                    <div>
+                        <Input 
+                            type="text" 
+                            name="emailAddress"
+                            label="Email Address" 
+                            register={register} r
+                            required="Please enter a valid email address"
+                            pattern={{
+                                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                message: "Please enter a valid email address"
+                            }}
+                        />
+                        {errors.emailAddress && <p className="text-[12px] text-red-500">{errors.emailAddress.message}</p>}
+                    </div>
+                    
+                    <div>
+                        <Input
+                            type="password" 
+                            name="password"
+                            label="Password" 
+                            register={register} 
+                                // required="Password must include uppercase, lowercase, number, and special character"
+                                // minlength={8}
+                                // pattern={{
+                                //     value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&])[A-Za-z\d@$!%*?#&]{8,}$/,
+                                //     message: "Password must include uppercase, lowercase, number, and special character"
+                                // }}
+                        />
+                        {errors.password && <p className="text-[12px] text-red-500">{errors.password.message}</p>}
+                    </div>
 
                     <Button 
                         variant="secondary" 
@@ -78,7 +79,7 @@ export const UserSignUp = () => {
                 </form>
         
                 <div className="text-center mt-4 text-sm text-gray-500">
-                    Already have an account? <span className="text-blue-600 cursor-pointer">Sign In</span>
+                   Already have an account <span className="text-blue-600 cursor-pointer">Sign In</span>
                 </div>
             </div>
         </div>

@@ -10,7 +10,9 @@ export const Navbar = () => {
                     IS
                 </div>
                 <div className="flex justify-center items-center gap-4 ">
-                    <Button variant="login">LogIn</Button>
+                    <Button variant="login" onClick={() => {
+                        navigate('/signin');
+                    }}>LogIn</Button>
                     <Button variant="getStarted" onClick={() => {
                         navigate('/signup')
                     }}>SignUp</Button>
