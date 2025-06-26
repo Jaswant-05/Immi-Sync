@@ -1,4 +1,4 @@
-function NavItem({ icon, text, active = false, expanded = true }) {
+export function SideItem({ icon, text, active = false, expanded = true }) {
     return (
       <a
         href="#"

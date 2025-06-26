@@ -1,10 +1,19 @@
+import { useState } from 'react';
 import { Sidebar } from "../ui/Sidebar";
 
 export const SideLayout = ({ children }) => {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
   return (
     <div className="flex min-h-screen w-full">
-      <Sidebar />
-      <main className="flex-1 overflow-auto">{children}</main>
+      <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
+      <main 
+        className={`flex-1 overflow-auto transition-all duration-300 bg-gray-50 ${
+          sidebarOpen ? 'ml-64' : 'ml-20'
+        }`}
+      >
+        {children}
+      </main>
     </div>
   );
 };
