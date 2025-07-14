@@ -1,7 +1,7 @@
 import { FileCheck2, UserCheck, Users } from "lucide-react";
 import { StatCard } from "../../ui/StatCard";
 
-export const ConsultancyDash = () => {
+export const Dashboard = () => {
     return (
         <div className="flex flex-col w-full overflow-auto ">
             <div className="text-2xl font-bold w-full px-6 py-4 border-b border-gray-200 bg-white">

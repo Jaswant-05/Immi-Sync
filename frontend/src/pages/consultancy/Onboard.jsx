@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 const libraries = ["places"];
 
-export const ConsultancySignUp = () => {
+export const Onboard = () => {
   const { register, handleSubmit, control, formState: {errors} } = useForm();
   const [geometry, setGeometry] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);

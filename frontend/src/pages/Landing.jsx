@@ -1,8 +1,9 @@
-import { Benefit } from "../landingcomponents/Benefit";
-import { Feature } from "../landingcomponents/Feature";
-import { Footer } from "../landingcomponents/Footer";
-import { Hero } from "../landingcomponents/Hero";
-import { Pricing } from "../landingcomponents/Pricing";
+import { Benefit } from "../ui/Benefit";
+import { Feature } from "../ui/Feature";
+import { Footer } from "../ui/Footer";
+import { Hero } from "../ui/Hero";
+import { Pricing } from "../ui/Pricing";
+
 
 export const Landing = () =>{
     return(

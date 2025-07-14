@@ -1,5 +1,5 @@
 import { Clock, Globe2, Shield } from "lucide-react";
-import { BenefitItem } from "../components/BenefitItem";
+import { BenefitItem } from "./BenefitItem";
 
 
 export const Benefit = () => {

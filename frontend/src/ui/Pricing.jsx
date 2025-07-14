@@ -1,5 +1,4 @@
-import { PriceCard } from "../components/PriceCard";
-
+import { PriceCard } from "./PriceCard";
 
 export const Pricing = () =>{
     return (

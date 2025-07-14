@@ -1,5 +1,5 @@
-import { FeatureCard } from "../components/FeatureCard";
 import { features } from "../utils/features";
+import { FeatureCard } from "./FeatureCard";
 
 
 export const Feature = () => {
