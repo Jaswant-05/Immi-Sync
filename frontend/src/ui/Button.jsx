@@ -1,40 +1,27 @@
 import clsx from "clsx";
 
 const VARIANTS = {
-  primary: "bg-white text-blue-600 hover:bg-blue-100 border-2 border-transparent",
-  secondary: "bg-blue-600 text-white hover:text-blue-600 hover:bg-white border-2 border-white",
-  login: "text-gray-600 hover:text-blue-600 border border-gray-600 border-2 hover:border-blue-600",
-  getStarted: "bg-blue-600 text-white hover:bg-blue-700 border border-2 border-transparent",
-  pricingPrimary: "bg-blue-600 text-white hover:bg-blue-700",
-  pricingSecondary: "bg-gray-100 text-gray-900 hover:bg-gray-200",
+  primary: "bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl",
+  secondary: "bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50 shadow-lg hover:shadow-xl",
+  ghost: "bg-white/10 text-white border border-white/20 hover:bg-white/20 backdrop-blur-sm",
+  outline: "border-2 border-white text-white hover:bg-white hover:text-blue-600",
 };
 
-const DISABLED_VARIANTS = {
-  primary: "bg-gray-100 text-gray-400 border-2 border-transparent cursor-not-allowed",
-  secondary: "bg-gray-400 text-gray-200 border-2 border-gray-400 cursor-not-allowed",
-  login: "text-gray-400 border-2 border-gray-300 cursor-not-allowed",
-  getStarted: "bg-gray-400 text-gray-200 border-2 border-transparent cursor-not-allowed",
-  pricingPrimary: "bg-gray-400 text-gray-200 cursor-not-allowed",
-  pricingSecondary: "bg-gray-200 text-gray-400 cursor-not-allowed",
-};
-
-export const Button = ({ 
-  children, 
-  variant = "primary", 
-  className, 
-  onClick, 
-  type = "button", 
+export const Button = ({
+  children,
+  variant = "primary",
+  className,
+  onClick,
+  type = "button",
   disabled = false,
-  ...rest 
+  ...rest
 }) => {
   return (
     <button
       className={clsx(
-        "box-border px-4 py-2 text-sm md:px-8 md:text-base",
-        "rounded-lg font-semibold transition-all duration-300",
-        disabled 
-          ? DISABLED_VARIANTS[variant] 
-          : clsx(VARIANTS[variant], "cursor-pointer"),
+        "px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95",
+        "flex items-center justify-center gap-2 relative overflow-hidden",
+        disabled ? "opacity-50 cursor-not-allowed" : VARIANTS[variant],
         className
       )}
       onClick={disabled ? undefined : onClick}

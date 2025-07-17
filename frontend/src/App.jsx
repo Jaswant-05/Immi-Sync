@@ -6,7 +6,9 @@ import { SignIn } from './pages/signIn/SignIn'
 import { SideLayout } from './layouts/SideLayout'
 import { Onboard } from './pages/consultancy/Onboard'
 import { Dashboard } from './pages/consultancy/Dashboard'
-import { SignUp } from './pages/client/UserSignUp'
+import { SignUp } from './pages/client/SignUp'
+import { Application } from './pages/consultancy/Application'
+
 
 function App() {
 
@@ -20,6 +22,7 @@ function App() {
           <Route path='/onboard' element={<NavLayout><Onboard /></NavLayout>} />
 
           <Route path='/dashboard' element={<SideLayout> <Dashboard /></SideLayout>}/>
+          <Route path='/application' element={<SideLayout> <Application /></SideLayout>}/>
         </Routes>
       </BrowserRouter>
     </div>
