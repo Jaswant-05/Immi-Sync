@@ -42,10 +42,12 @@ export const Dashboard = () => {
                     <div className="w-full overflow-x-auto">
                         <table className="w-full">
                             <thead className="bg-gray-50">
-                                <td className="px-6 py-3 font-medium text-xs text-gray-500">NAME</td>
-                                <td className="px-6 py-3 font-medium text-xs text-gray-500">TYPE</td>
-                                <td className="px-6 py-3 font-medium text-xs text-gray-500">STATUS</td>
-                                <td className="px-6 py-3 font-medium text-xs text-gray-500">DATE</td>
+                                <tr>
+                                    <td className="px-6 py-3 font-medium text-xs text-gray-500">NAME</td>
+                                    <td className="px-6 py-3 font-medium text-xs text-gray-500">TYPE</td>
+                                    <td className="px-6 py-3 font-medium text-xs text-gray-500">STATUS</td>
+                                    <td className="px-6 py-3 font-medium text-xs text-gray-500">DATE</td>
+                                </tr> 
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                                 <tr>

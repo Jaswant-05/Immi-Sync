@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import { Sidebar } from "../ui/Sidebar";
 
 export const SideLayout = ({ children }) => {
@@ -6,8 +6,11 @@ export const SideLayout = ({ children }) => {
 
   return (
     <div className="flex min-h-screen w-full">
-      <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
-      <main 
+      <Sidebar
+        open={sidebarOpen} 
+        setOpen={setSidebarOpen}
+      />
+      <main
         className={`flex-1 overflow-auto transition-all duration-300 bg-gray-50 ${
           sidebarOpen ? 'ml-64' : 'ml-20'
         }`}
