@@ -2,6 +2,7 @@ const Consultancy = require('../models/Consultancy');
 const Address = require('../models/Address');
 const createAddress = require('../helpers/address/createAddress');
 const User = require('../models/User');
+const Application = require('../models/Application')
 
 const createConsultancy = async(userId, name, address, phoneNumber) => {
   if (!userId || !name || !address || !phoneNumber) {
@@ -38,18 +39,35 @@ const removeConsultancy = async(consultancyId) => {
 };
 
 const updateConsultancy = async(data) => {
-  try{
-    const { consultancyId, ...updates} = data;
-    if(!consultancyId){
-      throw new Error(`Missing Fields for updating consultancy`)
+    try {
+        const { consultancyId, ...updates } = data;
+        
+        if (!consultancyId) {
+            throw new Error(`Missing consultancyId for updating consultancy`);
+        }
+
+        if (Object.keys(updates).length === 0) {
+            throw new Error(`No updates provided for consultancy`);
+        }
+
+        const consultancy = await Consultancy.findByIdAndUpdate(
+            consultancyId, 
+            updates,  
+            { 
+                new: true,
+                runValidators: true
+            }
+        );
+
+        if (!consultancy) {
+            throw new Error(`Consultancy not found with id: ${consultancyId}`);
+        }
+
+        return { success: true, consultancy };
+    } catch (error) {
+        console.error('Error updating Consultancy Information:', error);
+        return { success: false, error: error.message };
     }
-
-    const consultancy = await Consultancy.updateOne({_id : consultancyId}, { updates });
-    return({success: true, consultancy});
-
-  }catch(error){
-    throw new Error('Error updating Consultancy Information');
-  }
 };
 
 const getUsers = async (consultancyId) => {
@@ -64,9 +82,22 @@ const getUsers = async (consultancyId) => {
   }
 };
 
+const getApplication = async (consultancyId) => {
+  if(!consultancyId){
+    throw new Error("Missing consultancy Id");
+  }
+  try{
+    const applications = await Application.find( { consultancy: consultancyId });
+    return({success: true, applications});
+  }catch(error){
+    throw new Error(`Error fetchign applications: ${error.message}`);
+  }
+}
+
 module.exports = { 
   createConsultancy,
   removeConsultancy,
   updateConsultancy,
   getUsers,
+  getApplication
 };
