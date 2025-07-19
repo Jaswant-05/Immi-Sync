@@ -10,7 +10,6 @@ const DashboardSkeleton = () => (
             <p>Welcome NNC</p>
         </div>
         <div className="">
-            {/* Stats Cards Skeleton */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 my-8 px-6 h-full">
                 {[...Array(4)].map((_, index) => (
                     <div key={index} className="bg-white p-6 rounded-lg shadow ">
@@ -25,7 +24,6 @@ const DashboardSkeleton = () => (
                 ))}
             </div>
 
-            {/* Table Skeleton */}
             <div className="mx-6 font-medium shadow rounded-lg overflow-x-auto">
                 <div className="text-xl py-4 px-4 border border-gray-200 bg-white">
                     <p>Recent Applications</p>
@@ -99,22 +97,19 @@ const DashboardContent = () => {
         });
     };
 
-    // Check if any data is still loading
+
     const isLoading = totalUsersLoadable.state === 'loading' || 
                      applicationCountsLoadable.state === 'loading' || 
                      recentApplicationsLoadable.state === 'loading';
 
-    // Check if there are any errors
     const hasError = totalUsersLoadable.state === 'hasError' || 
                     applicationCountsLoadable.state === 'hasError' || 
                     recentApplicationsLoadable.state === 'hasError';
 
-    // Show skeleton while loading
     if (isLoading) {
         return <DashboardSkeleton />;
     }
 
-    // Show error state
     if (hasError) {
         return (
             <div className="flex flex-col w-full overflow-auto">
@@ -137,7 +132,6 @@ const DashboardContent = () => {
         );
     }
 
-    // Extract data with fallbacks
     const totalUsers = totalUsersLoadable.state === 'hasValue' ? totalUsersLoadable.contents : 0;
     const applicationCounts = applicationCountsLoadable.state === 'hasValue' 
         ? applicationCountsLoadable.contents 
