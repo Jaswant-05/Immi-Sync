@@ -186,15 +186,6 @@ export const Application = () => {
           <h1 className="font-bold text-3xl mb-1">Application</h1>
           <p className="text-gray-600">Manage and track all immigration applications</p>
         </div>
-        <div className="flex space-x-3">
-          <button
-            className="flex flex-row items-center bg-indigo-700 text-white py-2 px-6 rounded-lg gap-2 hover:bg-indigo-900 cursor-pointer"
-            onClick={handleClick}
-          >
-            <Plus size={15} />
-            <p>New Application</p>
-          </button>
-        </div>
       </div>
 
       {/* Search Section */}

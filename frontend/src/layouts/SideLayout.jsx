@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Sidebar } from "../ui/Sidebar";
+import { Outlet } from "react-router-dom";
 
 export const SideLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -15,7 +16,7 @@ export const SideLayout = ({ children }) => {
           sidebarOpen ? 'ml-64' : 'ml-20'
         }`}
       >
-        {children}
+        <Outlet />
       </main>
     </div>
   );

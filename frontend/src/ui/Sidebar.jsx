@@ -17,16 +17,16 @@ export const Sidebar = ({ open, setOpen }) => {
   const handleNavigation = (view) => {
     switch(view) {
       case 'dashboard':
-        navigate('/dashboard');
+        navigate('/consultancy/dashboard');
         break;
       case 'applications':
-        navigate('/application');
+        navigate('/consultancy/application');
         break;
       case 'checklists':
-        navigate('/checklist');
+        navigate('/consultancy/checklist');
         break;
       default:
-        navigate('/dashboard');
+        navigate('/consultancy/dashboard');
     }
   };
 

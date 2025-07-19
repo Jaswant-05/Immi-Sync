@@ -21,10 +21,6 @@ const uploadFileToGCS = (file) => {
       },
     });
 
-    blobStream.on('error', (err) => {
-      console.error('GCS Upload Error:', err);
-      reject(err);
-    });
 
     blobStream.on('finish', async () => {
       try {

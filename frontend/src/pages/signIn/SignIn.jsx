@@ -4,20 +4,33 @@ import { Button } from "../../ui/Button";
 import { useForm } from "react-hook-form";
 import axios from "axios"
 import { useNavigate } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
+import { useAuth } from "../../hooks/useAuth";
+import { authAtom } from "../../Recoil/atoms/authAtom";
 
 export const SignIn = () => {
     const { register, handleSubmit, formState: { errors }, } = useForm();
+    const setToken = useSetRecoilState(authAtom);
     const navigate = useNavigate();
     const onSubmit = async (data) => {
     try {
-        console.log("reached here");
+
         const response = await axios.post("http://localhost:3000/api/v1/auth/signin", {
             username: data.emailAddress,
             password: data.password,
         });
-        console.log("Signed in:", response.data);
-        localStorage.setItem("token", response.data.token);
-        navigate("/");
+
+        setToken({
+            token: response.data.token,
+            role: response.data.user.role,
+        });
+    
+        if(response.data.user.role === 'consultancy'){
+            navigate("/consultancy/dashboard");
+        } else {
+            navigate('/')
+        }
+       
 
     } catch (error) {
         console.error("Sign-in error:", error);
