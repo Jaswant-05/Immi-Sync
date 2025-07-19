@@ -23,6 +23,16 @@ const consultancySchema = new mongoose.Schema({
   stripe_customer_id : {
     type: String,
   },
+  createdAt: {
+        type: Date,
+        default: Date.now(),
+        required: true,
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now(),
+        required: false,
+    }
 });
 
 const Consultancy = mongoose.model('Consultancy', consultancySchema);

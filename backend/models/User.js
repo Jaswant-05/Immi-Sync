@@ -23,7 +23,16 @@ const userSchema = new mongoose.Schema({
     type : mongoose.Schema.Types.ObjectId,
     ref: 'Application',
   },
-  
+  createdAt: {
+        type: Date,
+        default: Date.now(),
+        required: true,
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now(),
+        required: false,
+    }
 });
 
 const User = mongoose.model('User', userSchema);

@@ -33,6 +33,7 @@ const checklistSchema = new mongoose.Schema({
     },
     updatedAt: {
         type: Date,
+        default: Date.now(),
         required: false,
     }
 })

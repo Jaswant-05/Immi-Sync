@@ -120,7 +120,12 @@ const applicationService = {
             if(!applicationId){
                 throw new Error(`Missing Application Id`);
             }
-            await Application.deleteOne({_id : applicationId});
+            const application = await Application.findById(applicationId);
+            if (!application) {
+            throw new Error("Application not found");
+            }
+
+            await application.deleteOne(); 
             return({success: true, message: "Application deleted successfully"});
         } catch(err) {
             throw new Error(`Error Deleting Application ${err.message}`) 

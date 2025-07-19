@@ -1,7 +1,9 @@
+const Application = require("../models/Application");
+const Checklist = require("../models/Checklist");
 const Task = require("../models/Task");
 
 const taskService = {
-    async createTask(params) { //should also have a relationship with application which has to be a must
+    async createTask(params) {
         try {
             const { userId, consultancyId, title, description, checklistId, application } = params;
 
@@ -19,6 +21,19 @@ const taskService = {
             }
 
             const newTask = await Task.create(taskData);
+
+            if (application) {
+                await Application.findByIdAndUpdate(application, {
+                    $addToSet: { tasks: newTask._id }
+                });
+            }
+
+            if(checklistId){
+                 await Checklist.findByIdAndUpdate(checklistId, {
+                    $addToSet: { tasks: newTask._id }
+                });
+            }
+
             return { success: true, newTask };
 
         } catch(err) {
@@ -26,25 +41,25 @@ const taskService = {
         }
     },
     async updateTask(params) {
-    try {
-        const { taskId, title, description, isDone, checklistId } = params;
+        try {
+            const { taskId, title, description, isDone, checklistId } = params;
 
-        const updateData = {};
-        if (title !== undefined) updateData.title = title;
-        if (description !== undefined) updateData.description = description;
-        if (isDone !== undefined) updateData.isDone = isDone;
-        if (checklistId !== undefined) updateData.checklist = checklistId;
+            const updateData = {};
+            if (title !== undefined) updateData.title = title;
+            if (description !== undefined) updateData.description = description;
+            if (isDone !== undefined) updateData.isDone = isDone;
+            if (checklistId !== undefined) updateData.checklist = checklistId;
 
-        const updatedTask = await Task.findByIdAndUpdate(taskId, updateData, { new: true });
+            const updatedTask = await Task.findByIdAndUpdate(taskId, updateData, { new: true });
 
-        if (!updatedTask) {
-            return { success: false, message: "Task not found" };
-        }
+            if (!updatedTask) {
+                return { success: false, message: "Task not found" };
+            }
 
-        return { success: true, updatedTask };
-    } catch (err) {
-        throw new Error(`Error in updating Task: ${err.message}`);
-    }
+            return { success: true, updatedTask };
+        } catch (err) {
+            throw new Error(`Error in updating Task: ${err.message}`);
+        }  
     },
     async getTask({ taskId }){
         try{
@@ -61,6 +76,19 @@ const taskService = {
     },
     async deleteTask({ taskId }){
         try{
+            const task = await Task.findOne({_id : taskId});
+
+            if (task.application) {
+                await Application.findByIdAndUpdate(task.application, {
+                    $pull: { tasks: task._id }
+                });
+            }
+
+            if (task.checklist) {
+                await Checklist.findByIdAndUpdate(task.checklist, {
+                    $pull: { tasks: task._id }
+                });
+            }
 
             await Task.deleteOne({ _id : taskId });
             return ({ success: true, message: "Successfully Deleted Tasks"});

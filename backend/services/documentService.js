@@ -1,8 +1,10 @@
+const Application = require("../models/Application");
+const Checklist = require("../models/Checklist");
 const Document = require("../models/Document");
 const { deleteFileFromGCS } = require("./gcsService");
 
 const documentService = {
-    async createDocument(payload){ //should also have a relationship with application which has to be a must
+    async createDocument(payload){
         try {
             const {
                 user,
@@ -25,6 +27,18 @@ const documentService = {
                 checklist,
                 application
             });
+
+            if (application) {
+                await Application.findByIdAndUpdate(application, {
+                    $addToSet: { documents: newDoc._id }
+                });
+            }
+
+            if(checklist){
+                 await Checklist.findByIdAndUpdate(checklist, {
+                    $addToSet: { documents: newDoc._id }
+                });
+            }
 
             return { success: true, document: newDoc };
 
@@ -74,6 +88,18 @@ const documentService = {
                 if (!result.success){
                     throw new Error(`error Deleting file from GCS`);
                 }
+            }
+
+            if (document.application) {
+                await Application.findByIdAndUpdate(document.application, {
+                    $pull: { documents: document._id }
+                });
+            }
+
+            if (document.checklist) {
+                await Checklist.findByIdAndUpdate(document.checklist, {
+                    $pull: { documents: document._id }
+                });
             }
 
             await Document.deleteOne({_id : document._id});
