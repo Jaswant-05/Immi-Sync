@@ -1,5 +1,5 @@
 const Consultancy = require("../models/Consultancy");
-const { removeConsultancy, getUsers, updateConsultancy, getApplication } = require("../services/consultancyService");
+const { removeConsultancy, getUsers, updateConsultancy, getApplication } = require("../services/consultancyService.js");
 
 const getConsultanacyInfo = async(req, res) => {
     try {

@@ -1,29 +1,27 @@
 const ApplicationService = require("../services/applicationService");
 const User = require("../models/User");
+const Consultancy = require("../models/Consultancy");
 
 const createApplication = async (req, res) => {
   try {
     const userId = req.userId;
+    const consultancy = await Consultancy.findOne({admin : userId});
+
     const {
-        consultancyId,
         applicant_name,
         applicant_email,
         application_type,
         application_status,
-        tasks,
-        documents,
     } = req.body;
 
 
     const payload = {
       user: userId,
-      consultancy: consultancyId,
+      consultancy: consultancy._id,
       applicant_name,
       applicant_email,
       application_type,
       application_status,
-      tasks,
-      documents,
     };
 
     const result = await ApplicationService.createApplication(payload);

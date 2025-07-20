@@ -6,6 +6,7 @@ const userRoutes = require('./routes/userRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 const documentRoutes = require('./routes/documentRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
+const checklistRoutes = require('./routes/checklistRoutes')
 const cors = require("cors");
 
 const app = express();
@@ -18,5 +19,6 @@ app.use('/api/v1/consultancy', consultancyRoutes);
 app.use('/api/v1/tasks', taskRoutes);
 app.use('/api/v1/documents', documentRoutes);
 app.use('/api/v1/applications', applicationRoutes);
+app.use('/api/v1/checklist', checklistRoutes)
 
 module.exports = app;

@@ -57,7 +57,7 @@ const applicationService = {
             application_status,
             applicant_email,
             page = 1,
-            limit = 10,
+            limit = 50,
             sort = { createdAt: -1 }
         } = filters;
 

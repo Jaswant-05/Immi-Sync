@@ -19,6 +19,49 @@ const checklistService = {
     }
   },
 
+  async getAllChecklists({filters = {}}) {
+    try{
+      const {
+        consultancy,
+        application,
+        page = 1,
+        limit = 50,
+        sort = { createdAt: -1}
+      } = filters;
+
+      const query = {};
+      
+      if(consultancy) query.consultancy = consultancy;
+      if(application) query.application = application;
+
+      const skip = (page - 1) * limit;
+
+      const checklists = await Checklist.find(query)
+        .sort(sort)
+        .skip(skip)
+        .limit(parseInt(limit))
+        .lean();
+
+      const totalCount = await Checklist.countDocuments(query);
+      const totalPages = Math.ceil(totalCount / limit)
+
+      return {
+        success : true,
+        checklists,
+        pagination: {
+          currentPage: parseInt(page),
+          totalPages,
+          totalCount,
+          hasNextPage: page < totalPages,
+          hasPrevPage: page > 1
+        }
+      }
+
+    } catch (err){
+      throw new Error(`Error Fetching Checklists: ${err.message}`);
+    }
+  },
+
   async addDocument({ checklistId, documentId }) {
     try {
       const checklist = await Checklist.findById(checklistId);
@@ -95,17 +138,22 @@ const checklistService = {
     }
   },
 
-  async assignChecklist({ checklistId, userId, application }) {  
+  async assignChecklist({ checklistId, application }) {
     try {
-      const checklist = await Checklist.findById(checklistId);
-      if (!checklist) return { success: false, message: "Checklist not found" };
+      const checklist = await Checklist.findById(checklistId).lean(); 
 
-      checklist.user = userId;
-      checklist.application = application
-      checklist.updatedAt = new Date();
-      await checklist.save();
+      if (!checklist) {
+        return { success: false, message: "Checklist not found" };
+      }
+      delete checklist._id;
 
-      return { success: true, checklist };
+      const newChecklist = await Checklist.create({
+        ...checklist,
+        application,
+        updatedAt: new Date(),
+      });
+
+      return { success: true, checklist: newChecklist };
     } catch (err) {
       throw new Error(`Error assigning Checklist: ${err.message}`);
     }
