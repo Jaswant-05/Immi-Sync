@@ -1,4 +1,6 @@
 import { Calendar, CheckCircle2, Edit, Eye, MoreHorizontal, User } from "lucide-react";
+import { getCompletedTask } from "../utils/helper/getCompletedTasks";
+import { getUploadedDocuments } from "../utils/helper/getUploadedDocuments";
 
 export const ApplicationRow = ({ 
     application, 
@@ -7,7 +9,7 @@ export const ApplicationRow = ({
     getStatusBadge 
 }) => {
     const getChecklistProgress = (application) => {
-        if (application.tasks_count === 0 || !application.tasks_count) {
+        if (!application.checklist) {
             return (
                 <div className="flex items-center">
                     <span className="text-sm text-gray-500 italic">None</span>
@@ -15,8 +17,13 @@ export const ApplicationRow = ({
             );  
         }
 
-        const progress = (application.tasks_completed / application.tasks_count) * 100;
-        const isComplete = application.tasks_completed === application.tasks_count;
+        const taskCount = application.checklist.tasks.length;
+        const documentCount = application.checklist.documents.length ;
+        const completedTasks = getCompletedTask(application.tasks)
+        const uploadedDocuments = getUploadedDocuments(application.documents);
+    
+        const progress = ((completedTasks + uploadedDocuments) / (taskCount + documentCount)) * 100;
+        const isComplete = (taskCount + documentCount) > 0 ? (completedTasks + uploadedDocuments) === (taskCount + documentCount) : false;
 
         return (
             <div className="flex items-center space-x-2">
@@ -26,21 +33,22 @@ export const ApplicationRow = ({
                         className={`mr-1 ${isComplete ? 'text-green-600' : 'text-gray-400'}`}
                     />
                     <span className="text-sm text-gray-900">
-                        {application.tasks_completed}/{application.tasks_count}
+                        {(completedTasks + uploadedDocuments)}/{(taskCount + documentCount)}
                     </span>
                 </div>
                 <div className="w-16 bg-gray-200 rounded-full h-2">
-                    <div
-                        className={`h-2 rounded-full transition-all ${
-                            isComplete ? 'bg-green-500' : 'bg-indigo-500'
-                        }`}
-                        style={{ width: `${progress}%` }}
-                    />
+                    {(taskCount + documentCount) > 0 
+                        && 
+                        <div
+                            className={`h-2 rounded-full transition-all ${
+                                isComplete ? 'bg-green-500' : 'bg-indigo-500'
+                            }`}
+                            style={{ width: `${progress}%` }}
+                    />}
                 </div>
             </div>
         );
     };
-
     return (
         <tr key={application.id} className="hover:bg-gray-50 transition-colors">
             <td className="px-6 py-4 whitespace-nowrap">
@@ -70,7 +78,7 @@ export const ApplicationRow = ({
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 <div className="flex items-center">
                     <Calendar size={14} className="mr-1" />
-                    {new Date(application.updated_date).toLocaleDateString()}
+                    {new Date(application.updatedAt).toLocaleDateString()}
                 </div>
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

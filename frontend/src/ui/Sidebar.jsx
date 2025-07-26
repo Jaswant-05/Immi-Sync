@@ -1,17 +1,25 @@
 import { BarChart3, FileCheck2, Home, LogOut, Menu, Settings } from "lucide-react";
 import { SideItem } from "./SideItem";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 export const Sidebar = ({ open, setOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { logOut } = useAuth();
 
   const getCurrentView = () => {
     const path = location.pathname;
     if (path.includes('dashboard')) return 'dashboard';
     if (path.includes('application')) return 'applications';
     if (path.includes('checklist')) return 'checklists';
+    if (path.includes('settings')) return 'settings';
     return 'dashboard';
+  };
+
+  const handlelogOut = () => {
+    logOut();
+    navigate('/')
   };
 
   const handleNavigation = (view) => {
@@ -24,6 +32,9 @@ export const Sidebar = ({ open, setOpen }) => {
         break;
       case 'checklists':
         navigate('/consultancy/checklist');
+        break;
+      case 'settings':
+        navigate('/consultancy/settings');
         break;
       default:
         navigate('/consultancy/dashboard');
@@ -65,13 +76,13 @@ export const Sidebar = ({ open, setOpen }) => {
           text="Settings" 
           active={getCurrentView() === 'settings'}
           expanded={open}
-          onClick={() => {}}
+          onClick={() => handleNavigation('settings')}
         />
         <SideItem 
           icon={<LogOut size={24} />} 
           text="Logout" 
           expanded={open}
-          onClick={() => {}}
+          onClick={handlelogOut}
         />
       </nav>
     </div>

@@ -12,6 +12,7 @@ export const SignIn = () => {
     const { register, handleSubmit, formState: { errors }, } = useForm();
     const setToken = useSetRecoilState(authAtom);
     const navigate = useNavigate();
+    const {logIn} = useAuth();
     const onSubmit = async (data) => {
     try {
 
@@ -24,6 +25,12 @@ export const SignIn = () => {
             token: response.data.token,
             role: response.data.user.role,
         });
+
+        logIn({
+            token: response.data.token,
+            role: response.data.user.role,
+        });
+
     
         if(response.data.user.role === 'consultancy'){
             navigate("/consultancy/dashboard");

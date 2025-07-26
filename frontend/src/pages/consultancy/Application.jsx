@@ -1,5 +1,6 @@
 import { useState, Suspense } from 'react';
 import { useRecoilStateLoadable } from 'recoil';
+import axios from 'axios';
 import {
     Search,
     CheckCircle,
@@ -7,45 +8,81 @@ import {
     Clock,
     AlertCircle,
 } from 'lucide-react';
-import { CreateApplicationModal } from '../../modals/CreateApplicationModal';
 import { EditApplicationModal } from '../../modals/EditApplicationModal';
 import { ApplicationDetailsModal } from '../../modals/ApplicationDetailsModal';
 import { ApplicationRow } from '../../ui/ApplicationRow';
 import { applicationsAtom } from '../../Recoil/atoms/applicationsAtom';
 import { ApplicationSkeleton } from '../../skeletons/ApplicationSkeleton';
+import { useAuth } from '../../hooks/useAuth';
 
 const ApplicationContent = () => {
-    const [applicationsLoadable, SetApplicationLoadable] = useRecoilStateLoadable(applicationsAtom);
+    const [applicationsLoadable, setApplicationsLoadable] = useRecoilStateLoadable(applicationsAtom);
     
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [typeFilter, setTypeFilter] = useState('all');
     const [selectedApplication, setSelectedApplication] = useState(null);
-    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [selectedApplicationForEdit, setSelectedApplicationForEdit] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
-    const [editingApplication, setEditingApplication] = useState(null);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const { token } = useAuth();
 
-    const handleCreateSubmit = (applicationData) => {
-        // TODO: Add application creation logic with Recoil
-        console.log('Creating new application...', applicationData);
-        setShowCreateModal(false);
-    };
+    const handleEditSubmit = async (applicationData) => {
+        setIsUpdating(true);
+        try {
+            const response = await axios.put(
+                `${import.meta.env.VITE_BACKEND_URL}/applications/${applicationData._id}`,
+                {
+                    applicant_name: applicationData.applicant_name,
+                    applicant_email: applicationData.applicant_email,
+                    application_type: applicationData.application_type,
+                    application_status: applicationData.application_status,
+                    updatedAt: new Date().toISOString()
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
 
-    const handleEditSubmit = (applicationData) => {
-        // TODO: Add application update logic with Recoil
-        console.log('Updating application...', applicationData);
-        setShowEditModal(false);
-        setEditingApplication(null);
+            if (response.data.success) {
+                if (applicationsLoadable.state === 'hasValue') {
+                    const currentApplications = applicationsLoadable.contents;
+                    const updatedApplications = currentApplications.map(app =>
+                        (app._id) === (applicationData._id)
+                            ? { ...app, ...response.data.application }
+                            : app
+                    );
+                    setApplicationsLoadable(updatedApplications);
+                }
+
+                console.log('Application updated successfully:', response.data.application);
+                
+                setShowEditModal(false);
+                setSelectedApplicationForEdit(null);
+            } else {
+                throw new Error(response.data.message || 'Failed to update application');
+            }
+        } catch (error) {
+            console.error('Error updating application:', error);
+            alert(error.response?.data?.message || 'Failed to update application. Please try again.');
+        } finally {
+            setIsUpdating(false);
+        }
     };
 
     const handleEditClick = (application) => {
-        setEditingApplication(application);
+        setSelectedApplicationForEdit(application);
         setShowEditModal(true);
     };
 
     const handleCloseEditModal = () => {
-        setShowEditModal(false);
-        setEditingApplication(null);
+        if (!isUpdating) {
+            setShowEditModal(false);
+            setSelectedApplicationForEdit(null);
+        }
     };
 
     const handleViewClick = (application) => {
@@ -75,13 +112,12 @@ const ApplicationContent = () => {
         return <ApplicationSkeleton />;
     }
 
-    // Handle error state
     if (applicationsLoadable.state === 'hasError') {
         return (
             <div className="min-w-full flex flex-col px-4 md:px-6 gap-4">
                 <div className="flex flex-col gap-2 pt-4 md:flex-row md:justify-between md:items-center">
                     <div>
-                        <h1 className="font-bold text-3xl mb-1">Application</h1>
+                        <h1 className="font-bold text-3xl mb-1">Applications</h1>
                         <p className="text-gray-600">Manage and track all immigration applications</p>
                     </div>
                 </div>
@@ -89,8 +125,8 @@ const ApplicationContent = () => {
                     <div className="text-center">
                         <XCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
                         <p className="text-gray-500 mb-4">Error loading applications</p>
-                        <button 
-                            onClick={() => window.location.reload()} 
+                        <button
+                            onClick={() => window.location.reload()}
                             className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
                         >
                             Retry
@@ -101,10 +137,8 @@ const ApplicationContent = () => {
         );
     }
 
-    // Extract applications data
     const applications = applicationsLoadable.contents || [];
 
-    // Filter applications
     const filteredApplications = applications.filter(app => {
         const matchesSearch = (app.applicant_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
             (app.applicant_email || '').toLowerCase().includes(searchTerm.toLowerCase());
@@ -118,15 +152,12 @@ const ApplicationContent = () => {
             {/* Header Section */}
             <div className="flex flex-col gap-2 pt-4 md:flex-row md:justify-between md:items-center">
                 <div>
-                    <h1 className="font-bold text-3xl mb-1">Application</h1>
+                    <h1 className="font-bold text-3xl mb-1">Applications</h1>
                     <p className="text-gray-600">Manage and track all immigration applications</p>
                 </div>
-                <button
-                    onClick={() => setShowCreateModal(true)}
-                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
-                >
-                    Create Application
-                </button>
+                <div className="text-sm text-gray-500">
+                    {filteredApplications.length} of {applications.length} applications
+                </div>
             </div>
 
             {/* Search Section */}
@@ -200,7 +231,7 @@ const ApplicationContent = () => {
                             {filteredApplications.length > 0 ? (
                                 filteredApplications.map((application) => (
                                     <ApplicationRow
-                                        key={application.id || application._id}
+                                        key={application._id}
                                         application={application}
                                         onView={handleViewClick}
                                         onEdit={handleEditClick}
@@ -214,9 +245,9 @@ const ApplicationContent = () => {
                                             <AlertCircle className="h-8 w-8 text-gray-400 mb-2" />
                                             <p className="mb-2">No applications found</p>
                                             <p className="text-xs text-gray-400">
-                                                {searchTerm || statusFilter !== 'all' || typeFilter !== 'all' 
-                                                    ? 'Try adjusting your search criteria' 
-                                                    : 'Create your first application to get started'
+                                                {searchTerm || statusFilter !== 'all' || typeFilter !== 'all'
+                                                    ? 'Try adjusting your search criteria'
+                                                    : 'Applications will appear here when clients create them'
                                                 }
                                             </p>
                                         </div>
@@ -228,11 +259,13 @@ const ApplicationContent = () => {
                 </div>
             </div>
 
+            {/* Modal Components */}
             <EditApplicationModal
                 isOpen={showEditModal}
                 onClose={handleCloseEditModal}
                 onSubmit={handleEditSubmit}
-                application={editingApplication}
+                application={selectedApplicationForEdit}
+                isLoading={isUpdating}
             />
             <ApplicationDetailsModal
                 isOpen={!!selectedApplication}

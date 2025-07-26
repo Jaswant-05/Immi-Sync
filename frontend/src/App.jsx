@@ -10,6 +10,7 @@ import { SignUp } from './pages/client/SignUp'
 import { Application } from './pages/consultancy/Application'
 import { Checklist } from './pages/consultancy/Checklist'
 import { Authentication } from './ui/Authentication'
+import { Settings } from './pages/consultancy/Settings'
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="application" element={<Application />} />
             <Route path="checklist" element={<Checklist />} />
+            <Route path="settings" element={<Settings/>} />
           </Route>
         </Routes>
       </BrowserRouter>
