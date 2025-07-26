@@ -31,7 +31,7 @@ const taskSchema = new mongoose.Schema({
     application : {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Application",
-        required: true
+        required: false
     },
     createdAt : {
         type : Date,

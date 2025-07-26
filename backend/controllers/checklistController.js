@@ -5,12 +5,14 @@ const createChecklist = async (req, res) => {
   try {
     const userId = req.userId;
     const consultancy = await Consultancy.findOne({admin : userId});
-    const { application } = req.body;
+    const { application, name, description } = req.body;
 
     const payload = {
       consultancyId: consultancy._id,
       userId,
-      application
+      application,
+      name,
+      description
     };
 
     const result = await checklistService.createChecklist(payload);
@@ -23,7 +25,7 @@ const createChecklist = async (req, res) => {
 const getAllChecklists = async (req, res) => {
   try {
 
-    const userId = req.userIdl
+    const userId = req.userId
     const consultancy = await Consultancy.findOne({admin : userId});
 
     const {
@@ -60,11 +62,13 @@ const getAllChecklists = async (req, res) => {
 
 const addDocumentToChecklist = async (req, res) => {
   try {
+    const userId = req.userId;
+    const consultancy = await Consultancy.findOne({admin : userId});
     const { checklistId } = req.params;
-    const { documentId } = req.body;
+    const { documentId, name } = req.body;
 
-    const result = await checklistService.addDocument({ checklistId, documentId });
-    
+    const result = await checklistService.addDocument({ checklistId, documentId, user: userId, consultancy: consultancy._id , name});
+
     if (!result.success) {
       return res.status(404).json(result);
     }
@@ -78,7 +82,8 @@ const addDocumentToChecklist = async (req, res) => {
 const removeDocumentFromChecklist = async (req, res) => {
   try {
     const { checklistId, documentId } = req.params;
-
+    console.log("Reached here");
+    console.log(checklistId, documentId);
     const result = await checklistService.removeDocument({ checklistId, documentId });
     
     if (!result.success) {
@@ -93,10 +98,12 @@ const removeDocumentFromChecklist = async (req, res) => {
 
 const addTaskToChecklist = async (req, res) => {
   try {
+    const userId = req.userId;
+    const consultancy = await Consultancy.findOne({admin : userId});
     const { checklistId } = req.params;
-    const { taskId } = req.body;
+    const { taskId, title, description} = req.body;
 
-    const result = await checklistService.addTask({ checklistId, taskId });
+    const result = await checklistService.addTask({ checklistId, taskId, title, description, isDone : false, user : userId, consultancy: consultancy._id});
     
     if (!result.success) {
       return res.status(404).json(result);
@@ -130,6 +137,29 @@ const assignChecklist = async (req, res) => {
     const { application } = req.body;
 
     const result = await checklistService.assignChecklist({ checklistId, application });
+    if (!result.success) {
+      return res.status(404).json(result);
+    }
+
+    return res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+const updateChecklist = async (req, res) => {
+  try {
+
+    const { checklistId } = req.params;
+    const updateData = req.body;
+
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key] === undefined) {
+        delete updateData[key];
+      }
+    });
+
+    const result = await checklistService.updateChecklist({ checklistId, updateData });
     
     if (!result.success) {
       return res.status(404).json(result);
@@ -165,5 +195,6 @@ module.exports = {
   addTaskToChecklist,
   removeTaskFromChecklist,
   assignChecklist,
+  updateChecklist,
   deleteChecklist
 };

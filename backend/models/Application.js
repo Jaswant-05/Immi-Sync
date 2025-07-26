@@ -41,6 +41,11 @@ const applicationSchema = new mongoose.Schema({
         type: String,
         enum: ['Draft', 'Applied', 'Approved', 'Declined'],
     },
+    checklist : {
+      type:  mongoose.Schema.Types.ObjectId,
+      ref : 'Checklist',
+      required : false
+    },
     createdAt : {
         type: Date,
         default: Date.now(),

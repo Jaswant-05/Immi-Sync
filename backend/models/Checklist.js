@@ -16,6 +16,14 @@ const checklistSchema = new mongoose.Schema({
         ref: 'Application',
         required: false
     },
+    name : {
+        type: String,
+        required: true,
+    },
+    description : {
+        type: String,
+        required: true,
+    },
     documents : [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Document',

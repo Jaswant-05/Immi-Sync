@@ -19,6 +19,6 @@ app.use('/api/v1/consultancy', consultancyRoutes);
 app.use('/api/v1/tasks', taskRoutes);
 app.use('/api/v1/documents', documentRoutes);
 app.use('/api/v1/applications', applicationRoutes);
-app.use('/api/v1/checklist', checklistRoutes)
+app.use('/api/v1/checklists', checklistRoutes)
 
 module.exports = app;

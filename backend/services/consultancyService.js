@@ -40,8 +40,9 @@ const removeConsultancy = async(consultancyId) => {
 
 const updateConsultancy = async(data) => {
     try {
-        const { consultancyId, ...updates } = data;
-        
+        console.log(data);
+        const { consultancyId, address, ...updates } = data;
+      
         if (!consultancyId) {
             throw new Error(`Missing consultancyId for updating consultancy`);
         }
@@ -59,11 +60,32 @@ const updateConsultancy = async(data) => {
             }
         );
 
+        let addressPayload = {};
+        let updatedAddress = {};
+        
+        if(address){
+          addressPayload = {
+            address : address.addressString,
+            longitude: address.longitude,
+            latitude : address.latitude,
+            updatedAt : Date.now()
+          } 
+
+          updatedAddress = await Address.findByIdAndUpdate(consultancy.address, addressPayload);
+
+          console.log(updatedAddress);
+          
+          if(!updatedAddress) {
+            throw new Error(`Error updating address`)
+          }
+        }
+
         if (!consultancy) {
             throw new Error(`Consultancy not found with id: ${consultancyId}`);
         }
 
-        return { success: true, consultancy };
+        return { success: true, consultancy, updatedAddress };
+
     } catch (error) {
         console.error('Error updating Consultancy Information:', error);
         return { success: false, error: error.message };
@@ -87,7 +109,7 @@ const getApplication = async (consultancyId) => {
     throw new Error("Missing consultancy Id");
   }
   try{
-    const applications = await Application.find( { consultancy: consultancyId });
+    const applications = await Application.find( { consultancy: consultancyId }).populate('checklist');
     return({success: true, applications});
   }catch(error){
     throw new Error(`Error fetchign applications: ${error.message}`);

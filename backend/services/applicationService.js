@@ -10,6 +10,7 @@ const applicationService = {
                 applicant_email,
                 application_type,
                 application_status,
+                checklist,
                 tasks = [],
                 documents = []
             } = params;
@@ -25,6 +26,7 @@ const applicationService = {
                 applicant_email,
                 application_type,
                 application_status,
+                checklist,
                 tasks,
                 documents
             });
@@ -35,6 +37,7 @@ const applicationService = {
         }
     },
     async getApplication(applicationId){
+        console.log("Inside service");
         try {
             if(!applicationId){
                 throw new Error(`Missing Application Id`);
@@ -50,6 +53,7 @@ const applicationService = {
     },
     async getAllApplications(filters = {}) {
         try {
+            console.log("Inside service");
         const {
             user,
             consultancy,
@@ -75,6 +79,7 @@ const applicationService = {
             .sort(sort)
             .skip(skip)
             .limit(parseInt(limit))
+            .populate('Checklist')
             .lean();
 
         const totalCount = await Application.countDocuments(query);

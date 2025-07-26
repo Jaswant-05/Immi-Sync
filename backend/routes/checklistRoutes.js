@@ -10,7 +10,8 @@ const {
   addTaskToChecklist,
   removeTaskFromChecklist,
   assignChecklist,
-  deleteChecklist
+  deleteChecklist,
+  updateChecklist
 } = require('../controllers/checklistController');
 
 // POST /checklists — Create new checklist
@@ -33,6 +34,9 @@ router.delete('/:checklistId/tasks/:taskId', authMiddleware, removeTaskFromCheck
 
 // POST /checklists/:checklistId/assign — Clone and assign checklist to an application
 router.post('/:checklistId/assign', authMiddleware, assignChecklist);
+
+//  PUT /checklists/:checklistId - Update checklist fields
+router.put('/:checklistId', authMiddleware, updateChecklist);
 
 // DELETE /checklists/:checklistId — Delete a checklist
 router.delete('/:checklistId', authMiddleware, deleteChecklist);

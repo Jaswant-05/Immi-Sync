@@ -1,3 +1,5 @@
+const { application } = require('express');
+const Application = require('../models/Application');
 const Checklist = require('../models/Checklist');
 const Document = require('../models/Document');
 const Task = require('../models/Task');
@@ -5,12 +7,14 @@ const documentService = require('./documentService');
 const taskService = require('./taskService');
 
 const checklistService = {
-  async createChecklist({ consultancyId, userId = null, application = null  }) { 
+  async createChecklist({ consultancyId, userId = null, application = null, name, description  }) { 
     try {
       const newChecklist = await Checklist.create({
         consultancy: consultancyId,
         user: userId,
-        application
+        application,
+        name,
+        description
       });
 
       return { success: true, checklist: newChecklist };
@@ -32,7 +36,11 @@ const checklistService = {
       const query = {};
       
       if(consultancy) query.consultancy = consultancy;
-      if(application) query.application = application;
+      if (application) {
+        query.application = application;
+      } else {
+        query.application = { $ne: null }; // Exclude null applications
+      }
 
       const skip = (page - 1) * limit;
 
@@ -40,7 +48,9 @@ const checklistService = {
         .sort(sort)
         .skip(skip)
         .limit(parseInt(limit))
-        .lean();
+        .lean()
+        .populate('documents')
+        .populate('tasks');
 
       const totalCount = await Checklist.countDocuments(query);
       const totalPages = Math.ceil(totalCount / limit)
@@ -62,24 +72,40 @@ const checklistService = {
     }
   },
 
-  async addDocument({ checklistId, documentId }) {
-    try {
-      const checklist = await Checklist.findById(checklistId);
-      if (!checklist) return { success: false, message: "Checklist not found" };
+  async addDocument({ checklistId, documentData, user, consultancy, name }) {
+        try {
+            const checklist = await Checklist.findById(checklistId);
+            if (!checklist) {
+                return { success: false, message: "Checklist not found" };
+            }
 
-      if (!checklist.documents.includes(documentId)) {
-        checklist.documents.push(documentId);
-        checklist.updatedAt = new Date();
-        await checklist.save();
-      }
+            const documentPayload = {
+                ...documentData,
+                user,
+                consultancy,
+                name,
+                checklist: checklistId,
+                uploaded: false 
+            };
 
-      await documentService.updateDocument({ documentId, checklist: checklistId });
+            const createResult = await documentService.createDocument(documentPayload);
 
-      return { success: true, checklist };
-    } catch (err) {
-      throw new Error(`Error adding Document to Checklist: ${err.message}`);
-    }
-  },
+            if (!createResult.success) {
+                return { success: false, message: "Failed to create document" };
+            }
+
+            const updatedChecklist = await Checklist.findById(checklistId).populate('documents');
+
+            return { 
+                success: true, 
+                document: createResult.document,
+                checklist: updatedChecklist 
+            };
+
+        } catch (err) {
+            throw new Error(`Error adding Document to Checklist: ${err.message}`);
+        }
+    },
 
   async removeDocument({ checklistId, documentId }) {
     try {
@@ -100,25 +126,43 @@ const checklistService = {
     }
   },
 
-  async addTask({ checklistId, taskId }) {
-    try {
-      const checklist = await Checklist.findById(checklistId);
-      if (!checklist) return { success: false, message: "Checklist not found" };
+  async addTask({ checklistId, title, description, user, consultancy, isDone }) {
+        try {
+            
+            const checklist = await Checklist.findById(checklistId);
+            if (!checklist) {
+                return { success: false, message: "Checklist not found" };
+            }
 
-      if (!checklist.tasks.includes(taskId)) {
-        checklist.tasks.push(taskId);
-        checklist.updatedAt = new Date();
-        await checklist.save();
-      }
+            const taskPayload = {
+                title,
+                description,
+                user,
+                consultancy,
+                isDone,
+                checklist: checklist._id, 
+            };
 
-      await taskService.updateTask({ taskId, checklistId });
+            const createResult = await taskService.createTask(taskPayload);
+            
+            if (!createResult.success) {
+                return { success: false, message: "Failed to create task" };
+            }
 
-      return { success: true, checklist };
-    } catch (err) {
-      throw new Error(`Error adding Task to Checklist: ${err.message}`);
-    }
+            const updatedChecklist = await Checklist.findById(checklistId).populate('tasks');
+
+            return { 
+                success: true, 
+                task: createResult.task,
+                checklist: updatedChecklist 
+            };
+
+        } catch (err) {
+            throw new Error(`Error adding Task to Checklist: ${err.message}`);
+        }
   },
 
+  
   async removeTask({ checklistId, taskId }) {
     try {
       const checklist = await Checklist.findById(checklistId);
@@ -153,9 +197,31 @@ const checklistService = {
         updatedAt: new Date(),
       });
 
-      return { success: true, checklist: newChecklist };
+      const updatedApplication = await Application.findByIdAndUpdate(application, {checklist : newChecklist._id})
+
+      return { success: true, checklist: newChecklist, application: updatedApplication };
     } catch (err) {
       throw new Error(`Error assigning Checklist: ${err.message}`);
+    }
+  },
+
+  async updateChecklist({ checklistId, updateData}){
+    try{
+
+      if(!checklistId){
+        throw new Error("No checklist ID found in updateChecklist Service")
+      }
+
+      const updated = await Checklist.findByIdAndUpdate(checklistId, updateData);
+
+      if(!updated){
+        throw new Error("Error updating checklist")
+      }
+
+      return({success : true, updated});
+
+    } catch (err) {
+      throw new Error(`Error Updating Checklist: ${err.message}`)
     }
   },
 

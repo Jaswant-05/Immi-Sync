@@ -5,31 +5,31 @@ const Task = require("../models/Task");
 const taskService = {
     async createTask(params) {
         try {
-            const { userId, consultancyId, title, description, checklistId, application } = params;
+            const { user, consultancy, title, description, checklist, application } = params;
 
             const taskData = {
-                user: userId,
-                consultancy: consultancyId,
+                user,
+                consultancy,
                 title,
                 description,
                 isDone: false,
                 application
             };
 
-            if (checklistId) {
-                taskData.checklist = checklistId;
+            if (checklist) {
+                taskData.checklist = checklist;
             }
-
+            console.log("here")
             const newTask = await Task.create(taskData);
-
+            console.log(newTask);
             if (application) {
                 await Application.findByIdAndUpdate(application, {
                     $addToSet: { tasks: newTask._id }
                 });
             }
 
-            if(checklistId){
-                 await Checklist.findByIdAndUpdate(checklistId, {
+            if(checklist){
+                 await Checklist.findByIdAndUpdate(checklist, {
                     $addToSet: { tasks: newTask._id }
                 });
             }
