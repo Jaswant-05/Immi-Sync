@@ -35,7 +35,7 @@ export const SignIn = () => {
         if(response.data.user.role === 'consultancy'){
             navigate("/consultancy/dashboard");
         } else {
-            navigate('/')
+            navigate('/client/dashboard')
         }
        
 

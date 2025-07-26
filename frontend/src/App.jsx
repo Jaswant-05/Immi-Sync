@@ -11,6 +11,11 @@ import { Application } from './pages/consultancy/Application'
 import { Checklist } from './pages/consultancy/Checklist'
 import { Authentication } from './ui/Authentication'
 import { Settings } from './pages/consultancy/Settings'
+import { ClientDashboard } from './pages/client/Dashboard'
+import { ClientApplication } from './pages/client/Applications'
+import { ClientDocuments } from './pages/client/Documents'
+import { ClientSettings } from './pages/client/Settings'
+import { ClientTasks } from './pages/client/Task'
 
 
 function App() {
@@ -29,6 +34,13 @@ function App() {
             <Route path="application" element={<Application />} />
             <Route path="checklist" element={<Checklist />} />
             <Route path="settings" element={<Settings/>} />
+          </Route>
+          <Route path="/client" element={<SideLayout />}>
+            <Route path="dashboard" element={< ClientDashboard/>} />
+            <Route path="application" element={<ClientApplication />} />
+            <Route path="documents" element={<ClientDocuments />} />
+            <Route path="tasks" element={<ClientTasks />} />
+            <Route path="settings" element={<ClientSettings/>} />
           </Route>
         </Routes>
       </BrowserRouter>

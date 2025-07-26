@@ -1,4 +1,4 @@
-import { BarChart3, FileCheck2, Home, LogOut, Menu, Settings } from "lucide-react";
+import { BarChart3, FileCheck2, Home, LogOut, Menu, Notebook, Settings, Upload } from "lucide-react";
 import { SideItem } from "./SideItem";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -6,15 +6,20 @@ import { useAuth } from "../hooks/useAuth";
 export const Sidebar = ({ open, setOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { logOut } = useAuth();
+  const { logOut, role } = useAuth();
 
   const getCurrentView = () => {
     const path = location.pathname;
-    if (path.includes('dashboard')) return 'dashboard';
-    if (path.includes('application')) return 'applications';
-    if (path.includes('checklist')) return 'checklists';
-    if (path.includes('settings')) return 'settings';
-    return 'dashboard';
+    if (path.includes('consultancy/dashboard')) return 'consultancy/dashboard';
+    if (path.includes('consultancy/application')) return 'consultancy/applications';
+    if (path.includes('consultancy/checklist')) return 'consultancy/checklists';
+    if (path.includes('consultancy/settings')) return 'consultancy/settings';
+    if (path.includes('client/dashboard')) return 'client/dashboard'
+    if (path.includes('client/application')) return 'client/application'
+    if (path.includes('client/documents')) return 'client/documents'
+    if (path.includes('client/tasks')) return 'client/tasks'
+    if (path.includes('client/settings')) return 'client/settings'
+    return role ==='consultancy' ? 'consultancy/dashboard' : 'client/dashboard';
   };
 
   const handlelogOut = () => {
@@ -24,20 +29,35 @@ export const Sidebar = ({ open, setOpen }) => {
 
   const handleNavigation = (view) => {
     switch(view) {
-      case 'dashboard':
+      case '/consultancy/dashboard':
         navigate('/consultancy/dashboard');
         break;
-      case 'applications':
+      case '/consultancy/applications':
         navigate('/consultancy/application');
         break;
-      case 'checklists':
+      case '/consultancy/checklist':
         navigate('/consultancy/checklist');
         break;
-      case 'settings':
+      case '/consultancy/settings':
         navigate('/consultancy/settings');
         break;
+      case '/client/dashboard':
+        navigate('/client/dashboard');
+        break;
+      case '/client/application':
+        navigate('/client/application');
+        break;
+      case '/client/documents':
+        navigate('/client/documents');
+        break;
+      case '/client/tasks':
+        navigate('/client/tasks');
+        break;
+      case '/client/settings':
+        navigate('/client/settings');
+        break;
       default:
-        navigate('/consultancy/dashboard');
+        role === "consultancy" ? navigate('/consultancy/dashboard') : navigate('/client/dashboard');
     }
   };
 
@@ -49,42 +69,89 @@ export const Sidebar = ({ open, setOpen }) => {
           <Menu size={24} />
         </button>
       </div>
-      <nav className="mt-8">
-        <SideItem 
-          icon={<Home size={24} />} 
-          text="Dashboard" 
-          active={getCurrentView() === 'dashboard'}
-          expanded={open}
-          onClick={() => handleNavigation('dashboard')}
-        />
-        <SideItem 
-          icon={<FileCheck2 size={24} />} 
-          text="Applications" 
-          active={getCurrentView() === 'applications'}
-          expanded={open}
-          onClick={() => handleNavigation('applications')}
-        />
-        <SideItem 
-          icon={<BarChart3 size={24} />} 
-          text="Checklists" 
-          active={getCurrentView() === 'checklists'}
-          expanded={open}
-          onClick={() => handleNavigation('checklists')}
-        />
-        <SideItem 
-          icon={<Settings size={24} />} 
-          text="Settings" 
-          active={getCurrentView() === 'settings'}
-          expanded={open}
-          onClick={() => handleNavigation('settings')}
-        />
-        <SideItem 
-          icon={<LogOut size={24} />} 
-          text="Logout" 
-          expanded={open}
-          onClick={handlelogOut}
-        />
+      {role === "consultancy" ? 
+        <nav className="mt-8">
+          <SideItem 
+            icon={<Home size={24} />} 
+            text="Dashboard" 
+            active={getCurrentView() === 'consultancy/dashboard'}
+            expanded={open}
+            onClick={() => handleNavigation('/consultancy/dashboard')}
+          />
+          <SideItem 
+            icon={<FileCheck2 size={24} />} 
+            text="Applications" 
+            active={getCurrentView() === 'consultancy/applications'}
+            expanded={open}
+            onClick={() => handleNavigation('/consultancy/applications')}
+          />
+          <SideItem 
+            icon={<BarChart3 size={24} />} 
+            text="Checklists" 
+            active={getCurrentView() === 'consultancy/checklists'}
+            expanded={open}
+            onClick={() => handleNavigation('/consultancy/checklist')}
+          />
+          <SideItem 
+            icon={<Settings size={24} />} 
+            text="Settings" 
+            active={getCurrentView() === 'consultancy/settings'}
+            expanded={open}
+            onClick={() => handleNavigation('/consultancy/settings')}
+          />
+          <SideItem 
+            icon={<LogOut size={24} />} 
+            text="Logout" 
+            expanded={open}
+            onClick={handlelogOut}
+          />
       </nav>
+        :
+       <nav className="mt-8">
+          <SideItem 
+              icon={<Home size={24} />} 
+              text="Dashboard" 
+              active={getCurrentView() === 'client/dashboard'}
+              expanded={open}
+              onClick={() => handleNavigation('/client/dashboard')}
+          />
+          <SideItem 
+            icon={<FileCheck2 size={24} />} 
+            text="Application" 
+            active={getCurrentView() === 'client/application'}
+            expanded={open}
+            onClick={() => handleNavigation('/client/application')}
+          />
+          <SideItem 
+            icon={<Upload size={24} />} 
+            text="Documents" 
+            active={getCurrentView() === 'client/documents'}
+            expanded={open}
+            onClick={() => handleNavigation('/client/documents')}
+          />
+          <SideItem 
+            icon={<Notebook size={24} />} 
+            text="Tasks" 
+            active={getCurrentView() === 'client/tasks'}
+            expanded={open}
+            onClick={() => handleNavigation('/client/tasks')}
+          />
+          <SideItem 
+            icon={<Settings size={24} />} 
+            text="Settings" 
+            active={getCurrentView() === 'client/settings'}
+            expanded={open}
+            onClick={() => handleNavigation('/client/settings')}
+          />
+          <SideItem 
+            icon={<LogOut size={24} />} 
+            text="Logout" 
+            expanded={open}
+            onClick={handlelogOut}
+          />
+       </nav>
+      }
+      
     </div>
   );
 };
