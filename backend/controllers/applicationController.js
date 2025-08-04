@@ -5,9 +5,9 @@ const Consultancy = require("../models/Consultancy");
 const createApplication = async (req, res) => {
   try {
     const userId = req.userId;
-    const consultancy = await Consultancy.findOne({admin : userId});
 
     const {
+        consultancy,
         applicant_name,
         applicant_email,
         application_type,
@@ -17,7 +17,7 @@ const createApplication = async (req, res) => {
 
     const payload = {
       user: userId,
-      consultancy: consultancy._id,
+      consultancy,
       applicant_name,
       applicant_email,
       application_type,
@@ -50,8 +50,10 @@ const getApplication = async (req, res) => {
 
 const getAllApplications = async (req, res) => {
   try {
+
+    const user = req.userId;
+
     const {
-      user,
       consultancy,
       application_type,
       application_status,

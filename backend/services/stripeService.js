@@ -11,9 +11,25 @@ module.exports = {
 
         return({success : true, stripe_customer_id : customer.id})
     },
-    async addCreditCard({paymentMethodId, customerId}){
-        const paymentMethod = stripe.paymentMethods.retrieve(paymentMethodId);
-        
+    
+    async createCheckoutSession(req, res) {
+        try {
+            const { priceId } = req.body;
 
-    }
+            if (!priceId) {
+                return res.status(400).json({ error: "Price ID is required" });
+            }
+
+            const session = await stripeService.createCheckoutSession({ priceId });
+
+            res.status(200).json({ sessionId: session.id, url: session.url });
+        } catch (err) {
+            console.error("Stripe Checkout Error:", err);
+            res.status(500).json({ error: `Failed to create checkout session: ${err.message}` });
+        }
+    },
+
+    async customerPortal({stripe_customer_id}){
+
+    },
 }

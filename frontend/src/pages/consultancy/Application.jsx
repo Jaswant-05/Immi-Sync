@@ -97,7 +97,10 @@ const ApplicationContent = () => {
             'Draft': { color: 'bg-gray-100 text-gray-800', icon: AlertCircle }
         };
 
-        const config = statusConfig[status];
+        const config = statusConfig[status] || {
+            color: 'bg-gray-100 text-gray-800',
+            icon: AlertCircle
+        };
         const IconComponent = config.icon;
 
         return (

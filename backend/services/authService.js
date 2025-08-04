@@ -2,7 +2,6 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const { createConsultancy } = require('./consultancyService');
-const Consultancy = require('../models/Consultancy');
 
 const signUp = async (data) => {
   const {
@@ -86,4 +85,27 @@ const signIn = async (data) => {
     }
   };
 
-module.exports = { signUp, signIn };
+  const changePassword = async(data) => {
+    const {
+      userId,
+      oldPassword,
+      newPassword
+    } = data
+
+    const user = await User.findOne({_id : userId});
+
+    if(!userId || !oldPassword || !newPassword){
+      throw new Error("Invaid Parameters")
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if(!isMatch){
+      throw new Error("Invalid Old Password");
+    }
+
+    const newHash = await bcrypt.hash(newPassword, 10);
+    user.password = newHash;
+    await user.save()
+  }
+
+module.exports = { signUp, signIn, changePassword };

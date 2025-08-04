@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { Sidebar } from "../ui/Sidebar";
 import { Outlet } from "react-router-dom";
+import { ActiveApplicationSelector } from "../ui/ActiveApplicationSelector";
+import { useAuth } from "../hooks/useAuth";
 
 export const SideLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { role } = useAuth();
 
   return (
     <div className="flex min-h-screen w-full">
@@ -16,6 +19,7 @@ export const SideLayout = ({ children }) => {
           sidebarOpen ? 'ml-64' : 'ml-20'
         }`}
       >
+        {role ==="client" && <ActiveApplicationSelector />}
         <Outlet />
       </main>
     </div>

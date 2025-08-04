@@ -9,7 +9,7 @@ const applicationService = {
                 applicant_name,
                 applicant_email,
                 application_type,
-                application_status,
+                application_status = "Draft",
                 checklist,
                 tasks = [],
                 documents = []
@@ -53,49 +53,53 @@ const applicationService = {
     },
     async getAllApplications(filters = {}) {
         try {
-            console.log("Inside service");
-        const {
-            user,
-            consultancy,
-            application_type,
-            application_status,
-            applicant_email,
-            page = 1,
-            limit = 50,
-            sort = { createdAt: -1 }
-        } = filters;
+            const {
+                user,
+                consultancy,
+                application_type,
+                application_status,
+                applicant_email,
+                page = 1,
+                limit = 50,
+                sort = { createdAt: -1 }
+            } = filters;
 
-        const query = {};
-        
-        if (user) query.user = user;
-        if (consultancy) query.consultancy = consultancy;
-        if (application_type) query.application_type = application_type;
-        if (application_status) query.application_status = application_status;
-        if (applicant_email) query.applicant_email = { $regex: applicant_email, $options: 'i' };
+            const query = {};
+            
+            if (user) query.user = user;
+            if (consultancy) query.consultancy = consultancy;
+            if (application_type) query.application_type = application_type;
+            if (application_status) query.application_status = application_status;
+            if (applicant_email) query.applicant_email = { $regex: applicant_email, $options: 'i' };
 
-        const skip = (page - 1) * limit;
-        
-        const applications = await Application.find(query)
-            .sort(sort)
-            .skip(skip)
-            .limit(parseInt(limit))
-            .populate('Checklist')
-            .lean();
+            const skip = (page - 1) * limit;
+            const applications = await Application.find(query)
+                .sort(sort)
+                .skip(skip)
+                .limit(parseInt(limit))
+                .populate({
+                    path: 'checklist',
+                    populate: [
+                    { path: 'documents' },
+                    { path: 'tasks' }
+                    ]
+                })
+                .lean();
 
-        const totalCount = await Application.countDocuments(query);
-        const totalPages = Math.ceil(totalCount / limit);
+            const totalCount = await Application.countDocuments(query);
+            const totalPages = Math.ceil(totalCount / limit);
 
-        return {
-            success: true,
-            applications,
-            pagination: {
-            currentPage: parseInt(page),
-            totalPages,
-            totalCount,
-            hasNextPage: page < totalPages,
-            hasPrevPage: page > 1
-            }
-        };
+            return {
+                success: true,
+                applications,
+                pagination: {
+                currentPage: parseInt(page),
+                totalPages,
+                totalCount,
+                hasNextPage: page < totalPages,
+                hasPrevPage: page > 1
+                }
+            };
         } catch (err) {
         throw new Error(`Error Fetching Applications: ${err.message}`);
         }

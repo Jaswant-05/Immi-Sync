@@ -25,6 +25,33 @@ const createConsultancy = async(userId, name, address, phoneNumber) => {
   return consultancy;
 };
  
+const getAllConsultancies = async(filters) => {
+  const {
+    user,
+    application,
+    limit = 500,
+    page = 1,
+    sort = { createdAt : -1 }
+  } = filters
+
+  const query = {}
+
+  if(user) query.user = user
+  if(application) query.application = application
+  const skip = (page - 1) * limit;
+
+  const consultancies = await Consultancy.find(query)
+      .sort(sort)
+      .skip(skip)
+      .limit(parseInt(limit))
+
+  if(!consultancies){
+    throw new Error("Error in Fetching Consultancies")
+  }
+
+  return {success : true , consultancies}
+};
+
 const removeConsultancy = async(consultancyId) => {
   if(!consultancyId){
     throw new Error('Missing consultancy Id');
@@ -120,6 +147,7 @@ module.exports = {
   createConsultancy,
   removeConsultancy,
   updateConsultancy,
+  getAllConsultancies,
   getUsers,
   getApplication
 };

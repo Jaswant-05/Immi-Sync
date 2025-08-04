@@ -5,11 +5,10 @@ const User = require("../models/User");
 const createDocument = async (req, res) => { 
   try {
     const userId = req.userId;
-    console.log(userId);
     const { name, checklistId, application } = req.body;
 
     const user = await User.findById(userId);
-    console.log(user);
+
     if (!user || !user.active_consultancy) {
       return res.status(404).json({ success: false, message: "User or active consultancy not found" });
     }
@@ -19,7 +18,6 @@ const createDocument = async (req, res) => {
     let uploaded = false;
 
     if (req.file) {
-      console.log("reached here");
       const filename = `${Date.now()}-${req.file.originalname}`;
       url = await uploadFileToGCS(req.file);
       gcs_file_name = filename;
@@ -64,8 +62,9 @@ const updateDocument = async (req, res) => {
       updates.uploaded = true;
     }
 
+    console.log(updates);
     const result = await DocumentService.updateDocument({ documentId, ...updates });
-
+    console.log(result)
     if (!result.success) {
       return res.status(404).json(result);
     }

@@ -1,3 +1,4 @@
+const { populate } = require("../models/Consultancy");
 const User = require("../models/User");
 
 const updateUserService = async(data) => {
@@ -25,8 +26,21 @@ const getUserInfo = async(userId) => {
     throw new Error(`Missing required field for getting User info`);
   }
   try{
-    console.log(userId);
-    const user = await User.findOne({ _id : userId });
+    const user = await User.findOne({ _id : userId }).populate({
+      path : "active_application",
+      populate : [
+        {
+          path: "checklist",
+          populate : [
+            {path : "documents"},
+            {path : 'tasks'}
+          ]
+        },
+        { path: "documents" },
+        { path: "tasks"}
+    ]
+      
+    });
     return({success: true, user});
   }catch(error){
     throw new Error(`Failed to fetch Users from db ${error.message}`);

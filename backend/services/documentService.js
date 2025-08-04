@@ -54,7 +54,7 @@ const documentService = {
             if (!document) {
                 return { success: false, message: "Document not found" };
             }
-
+            
             Object.keys(updates).forEach(key => {
                 if (document[key] !== undefined) {
                     document[key] = updates[key];

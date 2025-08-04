@@ -1,5 +1,5 @@
 const Consultancy = require("../models/Consultancy");
-const { removeConsultancy, getUsers, updateConsultancy, getApplication } = require("../services/consultancyService.js");
+const { removeConsultancy, getUsers, updateConsultancy, getApplication, getAllConsultancies } = require("../services/consultancyService.js");
 
 const getConsultanacyInfo = async(req, res) => {
     try {
@@ -16,6 +16,44 @@ const getConsultanacyInfo = async(req, res) => {
         res.status(400).json({ error: err.message });
     }
 }
+
+const getAllConsultanciesController = async (req, res) => {
+  try {
+    const {
+      user,
+      application,
+      page = 1,
+      limit = 10,
+      sortBy = 'createdAt',
+      sortOrder = 'desc'
+    } = req.query;
+
+    console.log("reached here")
+    const sort = {};
+    sort[sortBy] = sortOrder === 'desc' ? -1 : 1;
+
+    const filters = {
+      user,
+      application,
+      page: parseInt(page),
+      limit: parseInt(limit),
+      sort
+    };
+
+    Object.keys(filters).forEach((key) => {
+      if (filters[key] === undefined) {
+        delete filters[key];
+      }
+    });
+
+    const result = await getAllConsultancies(filters);
+    console.log(result);
+    return res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
 
 const getConsultancyUsers = async(req, res) => {
     try {
@@ -106,5 +144,6 @@ module.exports = {
     deleteConsultancy,
     getConsultancyUsers,
     updateConsultancyInfo,
-    getApplications
+    getApplications,
+    getAllConsultanciesController
 }
