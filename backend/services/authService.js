@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const { createConsultancy } = require('./consultancyService');
+const { createStripeAccount } = require('./stripeService');
+const Consultancy = require('../models/Consultancy');
 
 const signUp = async (data) => {
   const {
@@ -43,6 +45,15 @@ const signUp = async (data) => {
     const consultancy = await createConsultancy(user._id, name, address, phoneNumber);
     user.consultancy.push(consultancy._id);
     await user.save();
+
+    const stripePayload = {
+      username: name,
+      email: username
+    }
+    const result = await createStripeAccount(stripePayload);
+    const stripe_customer_id =  result.stripe_customer_id;
+
+    await Consultancy.findByIdAndUpdate(consultancy._id, {stripe_customer_id})
   }
 
   return user;
