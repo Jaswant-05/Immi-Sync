@@ -2,7 +2,6 @@ import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Landing } from './pages/Landing'
 import { NavLayout } from './layouts/NavLayout'
-import { SignIn } from './pages/signIn/SignIn'
 import { SideLayout } from './layouts/SideLayout'
 import { Onboard } from './pages/consultancy/Onboard'
 import { Dashboard } from './pages/consultancy/Dashboard'
@@ -16,6 +15,8 @@ import { ClientApplication } from './pages/client/Applications'
 import { ClientDocuments } from './pages/client/Documents'
 import { ClientSettings } from './pages/client/Settings'
 import { ClientTasks } from './pages/client/Task'
+import { Plans } from './pages/consultancy/Plans'
+import { SignIn } from './pages/signIn/signIn'
 
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
           <Route path='/signup' element={<NavLayout> <SignUp /></NavLayout>}/>
           <Route path='/signin' element={<NavLayout> <SignIn /></NavLayout>}/>
           <Route path='/onboard' element={<NavLayout><Onboard /></NavLayout>} />
+          <Route path="/plan" element={<NavLayout><Plans/></NavLayout>}/>
           
           <Route path="/consultancy" element={<SideLayout />}>
             <Route path="dashboard" element={<Dashboard />} />

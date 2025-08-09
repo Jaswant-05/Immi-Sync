@@ -33,7 +33,11 @@ export const SignIn = () => {
 
     
         if(response.data.user.role === 'consultancy'){
-            navigate("/consultancy/dashboard");
+            if(response.data.subscription_status !== "active"){
+                navigate("/plan")
+            }else{
+                navigate("/consultancy/dashboard");
+            }
         } else {
             navigate('/client/dashboard')
         }

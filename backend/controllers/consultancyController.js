@@ -6,7 +6,6 @@ const getConsultanacyInfo = async(req, res) => {
         const userId = req.userId;
         const consultancy = await Consultancy.findOne({ admin: userId }).populate('users').populate('address');
         
-        console.log(consultancy);
         if (!consultancy) {
             return res.status(404).json({ error: "Consultancy not found" });
         }

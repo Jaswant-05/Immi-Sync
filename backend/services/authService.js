@@ -56,7 +56,22 @@ const signUp = async (data) => {
     await Consultancy.findByIdAndUpdate(consultancy._id, {stripe_customer_id})
   }
 
-  return user;
+  const payload = {
+    userId : user._id,
+    role : user.role
+  }
+
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+  return {
+    user: {
+      _id: user._id,
+      username: user.username,
+      role: user.role,
+    },
+    token,
+    role : user.role,
+  };
 };
 
 
@@ -77,6 +92,16 @@ const signIn = async (data) => {
       if (!isMatch){
         throw new Error("Invalid Password")
       }
+
+      let subscription_status;
+      if(user.role === "consultancy"){
+        const consultancy = await Consultancy.findOne({admin : user._id}).lean();
+        if(!consultancy){
+          throw new Error("Consultancy not found");
+        }
+
+        subscription_status = consultancy.subscription_status;
+      }
   
       const payload = {
         userId: user._id,
@@ -89,6 +114,7 @@ const signIn = async (data) => {
         user,
         token,
         role : user.role,
+        subscription_status
       };
   
     } catch (err) {

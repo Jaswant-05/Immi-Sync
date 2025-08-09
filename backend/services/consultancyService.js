@@ -14,6 +14,7 @@ const createConsultancy = async(userId, name, address, phoneNumber) => {
     phoneNumber,
     status: 'unverified',
     admin: userId,
+    subscription_status: "inactive"
   });
 
   const addressPayload = createAddress({ ...address, consultancy_id: consultancy._id });

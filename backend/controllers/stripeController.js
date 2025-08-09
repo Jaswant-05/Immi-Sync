@@ -1,5 +1,7 @@
-const Consultancy = require("../models/Consultancy");
-const { createStripeAccount, createCheckoutSession, customerPortal } = require("../services/stripeService");
+const Stripe = require('stripe');
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+const { createStripeAccount, createCheckoutSession, customerPortal, handleCheckoutCompleted, handleSubscriptionCreated, handleSubscriptionUpdated, handleSubscriptionDeleted, handleInvoicePaid, handleInvoicePaymentFailed } = require("../services/stripeService");
+const Consultancy = require('../models/Consultancy');
 
 const stripeController = {
     async createCustomerAccount(req, res){
@@ -69,6 +71,7 @@ const stripeController = {
     },
     async createCustomerSession(req, res) {
         try {
+            console.log("reached here");
             const userId = req.userId;
             const consultancy = await Consultancy.findOne({admin : userId});
             const stripe_customer_id = consultancy.stripe_customer_id;
@@ -88,6 +91,66 @@ const stripeController = {
         });
     }
   },
+  async webhookHandler(req,res){
+    let data;
+    let eventType;
+    let event;
+    let signature = req.headers["stripe-signature"]
+
+    try{
+        event = stripe.webhooks.constructEvent(
+            req.rawBody,
+            signature,
+            process.env.STRIPE_WEBHOOK_SECRET
+        );
+    }catch (err) {
+        console.error("Webhook Signature Verification Failed:", err.message);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    data = event.data;
+    eventType = event.type;
+    const obj = event.data?.object;
+
+    try{
+        switch (eventType) {
+            case 'checkout.session.completed':
+                await handleCheckoutCompleted(obj);
+            break;
+
+            case 'customer.subscription.created':
+                await handleSubscriptionCreated(obj);
+            break;
+
+            case 'customer.subscription.updated':
+                await handleSubscriptionUpdated(obj);
+            break;
+
+            case 'customer.subscription.deleted':
+                await handleSubscriptionDeleted(obj);
+            break;
+
+            case 'invoice.paid':
+                await handleInvoicePaid(obj);
+            break;
+
+            case 'invoice.payment_failed':
+                await handleInvoicePaymentFailed(obj);
+            break;
+
+            default:
+                console.log('Unhandled event type:', eventType);
+            break;
+        }
+
+    res.status(200)
+
+    }catch(err){
+       onsole.error('Webhook handler error:', err);
+      return res.sendStatus(200);
+    }
+    
+  }
 }
 
 module.exports = stripeController

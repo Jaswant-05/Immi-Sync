@@ -22,17 +22,28 @@ const consultancySchema = new mongoose.Schema({
   }],
   stripe_customer_id : {
     type: String,
+    required: false
+  },
+  subscription_status : {
+    type: String,
+    enum : ['active', 'inactive'],
+    required: false
+  },
+  subscription_plan : {
+    type: String,
+    enum : ["basic", "standard", "plus"],
+    required: false,
   },
   createdAt: {
-        type: Date,
-        default: Date.now(),
-        required: true,
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now(),
-        required: false,
-    }
+    type: Date,
+    default: Date.now(),
+    required: true,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now(),
+    required: false,
+  }
 });
 
 const Consultancy = mongoose.model('Consultancy', consultancySchema);

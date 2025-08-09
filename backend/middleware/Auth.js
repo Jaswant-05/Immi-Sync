@@ -4,12 +4,16 @@ require('dotenv').config()
 const authMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization;
 
+
+    console.log(authHeader)
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(403).json({
             message : "Invalid Auth Token"
         });
     }
 
+    console.log("here2")
     const token = authHeader.split(' ')[1];
 
     try {

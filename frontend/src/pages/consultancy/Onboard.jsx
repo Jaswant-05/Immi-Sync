@@ -6,6 +6,9 @@ import { Input } from "../../ui/Input";
 import { Button } from "../../ui/Button";
 import { Lock, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
+import { authAtom } from "../../Recoil/atoms/authAtom";
+import { useAuth } from "../../hooks/useAuth";
 
 const libraries = ["places"];
 
@@ -15,6 +18,8 @@ export const Onboard = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const inputRef = useRef(null);
+  const setToken = useSetRecoilState(authAtom);
+   const {logIn} = useAuth();
   const navigate = useNavigate();
   
   const { field: addressField } = useController({
@@ -49,7 +54,18 @@ export const Onboard = () => {
       console.log("Sending payload:", payload);
       
       const response = await axios.post("http://localhost:3000/api/v1/auth/signup", payload);
+      console.log(response.data.result);
       
+      setToken({
+            token: response.data.result.token,
+            role: response.data.result.role,
+        });
+
+      logIn({
+          token: response.data.result.token,
+          role: response.data.result.role,
+      });
+
       console.log("Registration successful:", response.data);
       
       
@@ -65,7 +81,7 @@ export const Onboard = () => {
       }
     } finally {
       setIsSubmitting(false);
-      navigate('/')
+      navigate("/plan")
     }
   };
 

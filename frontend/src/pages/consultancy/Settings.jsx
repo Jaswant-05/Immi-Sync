@@ -11,7 +11,8 @@ import {
     User,
     AlertCircle,
     CheckCircle,
-    Loader2
+    Loader2,
+    WalletCards
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -110,6 +111,27 @@ export const Settings = () => {
         });
     }, [isLoaded, addressField]);
 
+    const handleSubscription = async() => {
+        try {
+            const result = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/stripe/create-customer-session`,
+                {},
+                {
+                    headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                    },
+                }
+            );
+
+            if(result.data.url){
+                window.location.href = result.data.url
+            }else{
+                console.log(result.data);
+            }
+        } catch (err) {
+        console.error(`Error: ${err.message}`);
+        }
+    }
     const onSubmit = async (data) => {
         try {
             setIsSubmitting(true);
@@ -342,7 +364,24 @@ export const Settings = () => {
                             </div>
 
                             {/* Submit Button */}
-                            <div className="flex justify-end pt-4">
+                            <div className="flex justify-end pt-4 gap-3">
+                                <button
+                                    type="button"
+                                    disabled={isSubmitting}
+                                    className={`inline-flex items-center px-6 py-3 rounded-lg text-sm font-medium transition-colors ${
+                                        isSubmitting
+                                            ? 'bg-indigo-400 cursor-not-allowed'
+                                            : 'bg-indigo-600 hover:bg-indigo-700'
+                                    } text-white`}
+                                    onClick={handleSubscription}
+                                >
+                                    <>
+                                        <WalletCards className="w-4 h-4 mr-2" />
+                                        Manage Subscription
+                                    </>
+                                    
+                                </button>
+
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}

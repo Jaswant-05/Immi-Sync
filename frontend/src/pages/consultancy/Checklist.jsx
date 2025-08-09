@@ -414,7 +414,7 @@ const ChecklistContent = () => {
                             <CheckSquare size={48} className="text-gray-400 mx-auto mb-4" />
                             <h3 className="text-lg font-semibold text-gray-900 mb-2">No templates found</h3>
                             <p className="text-gray-600 mb-4">
-                                {searchTerm || typeFilter !== 'all'
+                                {searchTerm !== 'all'
                                     ? 'Try adjusting your search criteria'
                                     : 'Create your first checklist template to get started'
                                 }
