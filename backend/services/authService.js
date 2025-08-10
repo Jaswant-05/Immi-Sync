@@ -127,6 +127,7 @@ const signIn = async (data) => {
   
     } catch (err) {
       console.error('Sign in error:', err);
+      throw err
     }
   };
 
