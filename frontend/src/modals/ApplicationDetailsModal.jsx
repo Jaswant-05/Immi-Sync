@@ -53,6 +53,19 @@ export const ApplicationDetailsModal = ({ isOpen, onClose, onEdit, application, 
     }
   };
 
+  const handleDownload = (documentId, documentUrl, documentName) => {
+    if (documentUrl) {
+        const link = document.createElement('a');
+        link.href = documentUrl;
+        link.download = documentName || 'document';
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } else {
+    }
+  };
+
   const completedTasks = allTasks.filter(task => task.completed).length;
   const uploadedDocs = allDocuments.filter(doc => doc.uploaded).length;
   const checklistCompletedTasks = checklistTasks.filter(task => task.completed).length;
@@ -263,6 +276,12 @@ export const ApplicationDetailsModal = ({ isOpen, onClose, onEdit, application, 
                             <div className="flex items-center gap-2">
                               {doc.uploaded ? (
                                 <span className="flex items-center gap-1 text-green-600 text-sm">
+                                  <button
+                                      onClick={() => handleDownload(doc._id, doc.url, doc.name)}
+                                      className="px-3 py-2 bg-gray-100 text-gray-700 rounded text-xs hover:bg-gray-200 transition-colors"
+                                  >
+                                      <Download size={12} />
+                                  </button>
                                   <CheckCircle2 size={16} />
                                   Uploaded
                                 </span>

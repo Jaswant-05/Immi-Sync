@@ -1,4 +1,3 @@
-const { application } = require('express');
 const Application = require('../models/Application');
 const Checklist = require('../models/Checklist');
 const Document = require('../models/Document');
@@ -39,7 +38,7 @@ const checklistService = {
       if (application) {
         query.application = application;
       } else {
-        query.application = { $ne: null }; // Exclude null applications
+        query.application = null;
       }
 
       const skip = (page - 1) * limit;
@@ -184,24 +183,96 @@ const checklistService = {
 
   async assignChecklist({ checklistId, application }) {
     try {
-      const checklist = await Checklist.findById(checklistId).lean(); 
+        const templateChecklist = await Checklist.findById(checklistId)
+            .populate('documents')
+            .populate('tasks')
+            .lean();
+            
+        if (!templateChecklist) {
+            return { success: false, message: "Checklist not found" };
+        }
 
-      if (!checklist) {
-        return { success: false, message: "Checklist not found" };
-      }
-      delete checklist._id;
+        if (templateChecklist.application) {
+            return { success: false, message: "Cannot assign an already assigned checklist" };
+        }
 
-      const newChecklist = await Checklist.create({
-        ...checklist,
-        application,
-        updatedAt: new Date(),
-      });
+        const applicationDoc = await Application.findById(application).lean();
+        if (!applicationDoc) {
+            return { success: false, message: "Application not found" };
+        }
 
-      const updatedApplication = await Application.findByIdAndUpdate(application, {checklist : newChecklist._id})
+        const newDocuments = [];
+        if (templateChecklist.documents && templateChecklist.documents.length > 0) {
+            for (const doc of templateChecklist.documents) {
+                const newDoc = await Document.create({
+                    user: applicationDoc.user,
+                    consultancy: doc.consultancy,
+                    name: doc.name,
+                    gcs_file_name: null,
+                    url: null,
+                    uploaded: false,
+                    application: application,
+                });
+                newDocuments.push(newDoc._id);
+            }
+        }
 
-      return { success: true, checklist: newChecklist, application: updatedApplication };
+        const newTasks = [];
+        if (templateChecklist.tasks && templateChecklist.tasks.length > 0) {
+            for (const task of templateChecklist.tasks) {
+                const newTask = await Task.create({
+                    title: task.title,
+                    description: task.description,
+                    consultancy: task.consultancy,
+                    user: applicationDoc.user,
+                    application: application,
+                    checklist: null, 
+                    isDone: false,
+                    updatedAt: new Date()
+                });
+                newTasks.push(newTask._id);
+            }
+        }
+
+        const newChecklist = await Checklist.create({
+            consultancy: templateChecklist.consultancy,
+            user: applicationDoc.user,
+            application: application, 
+            name: templateChecklist.name,
+            description: templateChecklist.description,
+            documents: newDocuments,
+            tasks: newTasks,
+            updatedAt: new Date()
+        });
+
+        if (newDocuments.length > 0) {
+            await Document.updateMany(
+                { _id: { $in: newDocuments } },
+                { checklist: newChecklist._id }
+            );
+        }
+
+        if (newTasks.length > 0) {
+            await Task.updateMany(
+                { _id: { $in: newTasks } },
+                { checklist: newChecklist._id }
+            );
+        }
+
+        const updatedApplication = await Application.findByIdAndUpdate(
+            application, 
+            { checklist: newChecklist._id },
+            { new: true }
+        );
+
+        return { 
+            success: true, 
+            checklist: newChecklist, 
+            application: updatedApplication 
+        };
+
     } catch (err) {
-      throw new Error(`Error assigning Checklist: ${err.message}`);
+        throw new Error(`Error assigning Checklist: ${err.message}`);
     }
   },
 

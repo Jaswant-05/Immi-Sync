@@ -100,7 +100,6 @@ export const ClientDashboard = () => {
             link.click();
             document.body.removeChild(link);
         } else {
-            alert('Document not available for download');
         }
     };
 
@@ -128,12 +127,12 @@ export const ClientDashboard = () => {
     const completedApplicationTasks = applicationTasks.filter(task => task.isDone).length;
     const totalTasks = checklistTasks.length + applicationTasks.length;
     const completedTasks = completedChecklistTasks + completedApplicationTasks;
-    const progressPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
     const uploadedChecklistDocs = checklistDocuments.filter(doc => doc.uploaded).length;
     const uploadedApplicationDocs = applicationDocuments.filter(doc => doc.uploaded).length;
     const totalDocs = checklistDocuments.length + applicationDocuments.length;
     const uploadedDocs = uploadedChecklistDocs + uploadedApplicationDocs;
+    const progressPercentage = (totalTasks + totalDocs) > 0 ? Math.round(((completedTasks + uploadedDocs) / (totalTasks + totalDocs)) * 100) : 0;
     const missingDocs = totalDocs - uploadedDocs;
 
     return (
@@ -199,7 +198,7 @@ export const ClientDashboard = () => {
                             ></div>
                         </div>
                         <p className="text-sm text-gray-600 mt-2">
-                            {completedTasks} of {totalTasks} tasks completed
+                            {(completedTasks + uploadedDocs)} of {(totalTasks + totalDocs)} checklist items completed
                         </p>
                     </div>
 

@@ -50,15 +50,23 @@ const ApplicationContent = () => {
             if (response.data.success) {
                 if (applicationsLoadable.state === 'hasValue') {
                     const currentApplications = applicationsLoadable.contents;
-                    const updatedApplications = currentApplications.map(app =>
-                        (app._id) === (applicationData._id)
-                            ? { ...app, ...response.data.application }
-                            : app
-                    );
+                    const updatedApplications = currentApplications.map(app => {
+                        if (app._id === applicationData._id) {
+                            return {
+                                ...app,
+                                applicant_name: applicationData.applicant_name,
+                                applicant_email: applicationData.applicant_email,
+                                application_type: applicationData.application_type,
+                                application_status: applicationData.application_status,
+                                updatedAt: new Date().toISOString()
+                            };
+                        }
+                        return app;
+                    });
                     setApplicationsLoadable(updatedApplications);
                 }
 
-                console.log('Application updated successfully:', response.data.application);
+                console.log('Application updated successfully');
                 
                 setShowEditModal(false);
                 setSelectedApplicationForEdit(null);
