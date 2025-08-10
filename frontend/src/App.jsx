@@ -17,6 +17,9 @@ import { ClientSettings } from './pages/client/Settings'
 import { ClientTasks } from './pages/client/Task'
 import { Plans } from './pages/consultancy/Plans'
 import { SignIn } from './pages/signIn/signIn'
+import { ForgotPassword } from './pages/common/ForgotPassword'
+import { ResetPassword } from './pages/common/ResetPassword'
+import { VerifyEmail } from './pages/common/VerifyEmail'
 
 
 function App() {
@@ -30,6 +33,9 @@ function App() {
           <Route path='/signin' element={<NavLayout> <SignIn /></NavLayout>}/>
           <Route path='/onboard' element={<NavLayout><Onboard /></NavLayout>} />
           <Route path="/plan" element={<NavLayout><Plans/></NavLayout>}/>
+          <Route path="/forgot-password" element={<NavLayout><ForgotPassword/></NavLayout>}/>
+          <Route path="/reset-password" element={<NavLayout><ResetPassword/></NavLayout>}/>
+          <Route path="/verify-email" element={<NavLayout><VerifyEmail/></NavLayout>}/>
           
           <Route path="/consultancy" element={<SideLayout />}>
             <Route path="dashboard" element={<Dashboard />} />

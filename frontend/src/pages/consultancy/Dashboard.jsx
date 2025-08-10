@@ -7,7 +7,7 @@ import { allApplicationCountsSelector, recentApplicationsSelector, totalUserSele
 const DashboardSkeleton = () => (
     <div className="flex flex-col w-full overflow-auto">
         <div className="text-2xl font-bold w-full px-6 py-4 bg-white">
-            <p>Welcome!</p>
+            <p>Dashboard</p>
         </div>
         <div className="">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 my-8 px-6 h-full">
@@ -145,7 +145,7 @@ const DashboardContent = () => {
     return (
         <div className="flex flex-col w-full overflow-auto">
             <div className="text-2xl font-bold w-full px-6 py-4 border-b border-gray-200 bg-white">
-                <p>Welcome NNC</p>
+                <p>Dashboard</p>
             </div>
             <div className="">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 my-8 px-6 h-full">

@@ -32,7 +32,7 @@ export const Plans = () => {
       console.log(priceId);
 
       const { data } = await axios.post(
-        "http://localhost:3000/api/v1/stripe/create-checkout-session",
+        `${import.meta.env.VITE_BACKEND_URL}/stripe/create-checkout-session`,
         { priceId },
         {
           headers: {

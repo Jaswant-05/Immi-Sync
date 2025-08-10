@@ -3,7 +3,7 @@ import { Input } from "../../ui/Input";
 import { Button } from "../../ui/Button";
 import { useForm } from "react-hook-form";
 import axios from "axios"
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { useAuth } from "../../hooks/useAuth";
 import { authAtom } from "../../Recoil/atoms/authAtom";
@@ -16,7 +16,7 @@ export const SignIn = () => {
     const onSubmit = async (data) => {
     try {
 
-        const response = await axios.post("http://localhost:3000/api/v1/auth/signin", {
+        const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/signin`, {
             username: data.emailAddress,
             password: data.password,
         });
@@ -67,7 +67,7 @@ export const SignIn = () => {
                             type="text" 
                             name="emailAddress"
                             label="Email Address" 
-                            register={register} r
+                            register={register} 
                             required="Please enter a valid email address"
                             pattern={{
                                 value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
@@ -91,6 +91,12 @@ export const SignIn = () => {
                                 // }}
                         />
                         {errors.password && <p className="text-[12px] text-red-500">{errors.password.message}</p>}
+                    </div>
+
+                    <div className="mt-2 text-right">
+                        <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">
+                            Forgot password?
+                        </Link>
                     </div>
 
                     <Button 

@@ -53,9 +53,9 @@ export const Onboard = () => {
       
       console.log("Sending payload:", payload);
       
-      const response = await axios.post("http://localhost:3000/api/v1/auth/signup", payload);
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/signup`, payload);
       console.log(response.data.result);
-      
+
       setToken({
             token: response.data.result.token,
             role: response.data.result.role,
