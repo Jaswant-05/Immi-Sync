@@ -35,4 +35,54 @@ const changePassword = async (req, res) => {
   }
 };
 
-module.exports = { signUp, signIn, changePassword };
+const requestPasswordReset = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: 'Email is required' });
+
+    await authService.resetPassword({ email });
+    return res.status(200).json({ message: 'Password reset email sent' });
+  } catch (err) {
+    return res.status(400).json({ message: err.message });
+  }
+};
+
+const resendConfirmationEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: 'Email is required' });
+
+    await authService.confirmEmail({ email });
+    return res.status(200).json({ message: 'Confirmation email sent' });
+  } catch (err) {
+    return res.status(400).json({ message: err.message });
+  }
+};
+
+const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.query;
+    if (!token) return res.status(400).json({ message: 'Token is required' });
+
+    await authService.verifyEmail({ token });
+    return res.status(200).json({ message: 'Email verified successfully' });
+  } catch (err) {
+    return res.status(400).json({ message: err.message });
+  }
+};
+
+const completePasswordReset = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+    if (!token || !newPassword) {
+      return res.status(400).json({ message: 'Token and newPassword are required' });
+    }
+
+    await authService.completePasswordReset({ token, newPassword });
+    return res.status(200).json({ message: 'Password reset successfully' });
+  } catch (err) {
+    return res.status(400).json({ message: err.message });
+  }
+};
+
+module.exports = { signUp, signIn, changePassword, requestPasswordReset, resendConfirmationEmail, verifyEmail, completePasswordReset };
