@@ -68,6 +68,9 @@ export const Onboard = () => {
 
       console.log("Registration successful:", response.data);
       
+      setTimeout(() => {
+        navigate("/plan")
+      }, 1500)
       
     } catch (error) {
       console.error("Registration failed:", error);
@@ -81,7 +84,7 @@ export const Onboard = () => {
       }
     } finally {
       setIsSubmitting(false);
-      navigate("/plan")
+
     }
   };
 

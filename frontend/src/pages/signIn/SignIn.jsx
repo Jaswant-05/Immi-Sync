@@ -1,4 +1,4 @@
-import { ArrowRight, Lock } from "lucide-react"
+import { AlertCircle, ArrowRight, Lock } from "lucide-react"
 import { Input } from "../../ui/Input";
 import { Button } from "../../ui/Button";
 import { useForm } from "react-hook-form";
@@ -7,14 +7,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { useAuth } from "../../hooks/useAuth";
 import { authAtom } from "../../Recoil/atoms/authAtom";
+import { useState } from "react";
 
 export const SignIn = () => {
     const { register, handleSubmit, formState: { errors }, } = useForm();
     const setToken = useSetRecoilState(authAtom);
     const navigate = useNavigate();
     const {logIn} = useAuth();
+    const [error, setError] = useState("");
+
     const onSubmit = async (data) => {
     try {
+        setError(""); 
 
         const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/signin`, {
             username: data.emailAddress,
@@ -44,8 +48,17 @@ export const SignIn = () => {
        
 
     } catch (error) {
-        console.error("Sign-in error:", error);
+    if (error.response?.status === 401) {
+        // Show invalid credentials message
+        setError("Invalid email or password");
+    } else if (error.response?.status === 500) {
+        // Show server error message
+        setError("Server error. Please try again later.");
+    } else {
+        // Show generic error
+        setError(error.response?.data?.message || "An error occurred");
     }
+}
     };
 
 
@@ -61,6 +74,13 @@ export const SignIn = () => {
                     Sign in to Immi-Sync
                 </p>
         
+                {error && (
+                    <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                        <p className="text-sm text-red-600">{error}</p>
+                    </div>
+                )}
+
                 <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
                     <div>
                         <Input 

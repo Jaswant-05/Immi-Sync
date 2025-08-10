@@ -1,27 +1,38 @@
-import { ArrowRight, Lock } from "lucide-react"
+import { AlertCircle, ArrowRight, Lock } from "lucide-react"
 import { Input } from "../../ui/Input";
 import { Button } from "../../ui/Button";
 import { useForm } from "react-hook-form";
 import axios from "axios"
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export const SignUp = () => {
     const { register, handleSubmit, formState: { errors }, } = useForm();
+    const [error, setError] = useState("");
+
     const navigate = useNavigate();
     const onSubmit = async (data) => {
     try {
-        console.log("reached here");
         const response = await axios.post("http://localhost:3000/api/v1/auth/signup", {
             username: data.emailAddress,
             password: data.password,
             role: 'client'
         });
 
-        console.log(response.data);   
 
-    } catch (error) {
-        console.error("Sign-in error:", error);
-    }
+    }   catch (error) {
+            console.error("Sign-up error:", error);
+            
+            if (error.response?.status === 409) {
+                setError("An account with this email already exists");
+            } else if (error.response?.status === 400) {
+                setError(error.response?.data?.message || "Please check your input");
+            } else if (error.response?.status === 500) {
+                setError("Server error. Please try again later.");
+            } else {
+                setError(error.response?.data?.message || "An error occurred during registration");
+            }
+        }
     };
 
     return (
@@ -34,6 +45,13 @@ export const SignUp = () => {
                 <p className="text-sm text-gray-500 text-center mb-6">
                     Create a new account
                 </p>
+
+                {error && (
+                    <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                        <p className="text-sm text-red-600">{error}</p>
+                    </div>
+                )}
         
                 <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
                     <div>
@@ -41,7 +59,7 @@ export const SignUp = () => {
                             type="text" 
                             name="emailAddress"
                             label="Email Address" 
-                            register={register} r
+                            register={register} 
                             required="Please enter a valid email address"
                             pattern={{
                                 value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
